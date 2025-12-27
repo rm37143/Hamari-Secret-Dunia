@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamari Secret Dunya</title>
+    <style>
+        body { background: #fffafa; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; color: #444; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #fce4ec; padding-bottom: 10px; }
+        h1 { font-weight: 300; color: #d88a8a; }
+        .msg { font-style: italic; color: #888; max-width: 300px; line-height: 1.5; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; }
+        .btn { background: white; padding: 15px; border-radius: 12px; text-align: center; color: #d88a8a; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #fce4ec; font-size: 0.9rem; }
+        .btn:hover { background: #ffebee; }
+        footer { margin-top: 30px; font-size: 0.7rem; color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Hamari Secret Dunya</h1>
+        <p class="msg">"N...a, Har button ke peeche apke liye kuch khas hai..."</p>
+    </div>
+
+    <div class="menu-grid">
+        <div class="btn" onclick="askPass('https://hack.chat/?room-name')">1. Chat Room</div>
+        <div class="btn" onclick="askPass('YAHAN_PINTEREST_LINK')">2. Pinterest</div>
+        <div class="btn" onclick="askPass('')">3. Maafi Nama (Empty)</div>
+        <div class="btn" onclick="askPass('')">4. Purani Yaadein</div>
+        <div class="btn" onclick="askPass('')">5. Mere Dil ki Dua</div>
+        <div class="btn" onclick="askPass('')">6. Tumhare Liye</div>
+        <div class="btn" onclick="askPass('')">7. Fav Songs</div>
+        <div class="btn" onclick="askPass('')">8. Mere Wade</div>
+        <div class="btn" onclick="askPass('')">9. Digital Gift</div>
+        <div class="btn" onclick="askPass('')">10. Secret Notes</div>
+    </div>
+
+    <footer>R.m. Protected - 10 Years of Trust</footer>
+
+    <script>
+        function askPass(link) {
+            if(link === "") {
+                alert("Nisha, ye rasta abhi tayyar ho raha hai...");
+                return;
+            }
+            var pass = prompt("Is raaste ka password yaad hai? (Humari dosti ke saal)");
+            if(pass === "10Saal") {
+                window.location.href = link;
+            } else {
+                alert("Ghalat Password! Dobara koshish karein.");
+            }
+        }
+    </script>
+
+</body>
+</html>
