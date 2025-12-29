@@ -1,77 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Secret World - New Project</title>
-    <style>
-        :root { --main-pink: #ff85a2; --glass: rgba(255, 255, 255, 0.8); }
-        body { background: linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%); font-family: 'Segoe UI', sans-serif; height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; }
-        
-        /* Login Screen */
-        .login-card { background: var(--glass); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 320px; text-align: center; border: 1px solid white; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 25px; outline: none; text-align: center; }
-        button { background: var(--main-pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-        
-        /* Dashboard Hidden initially */
-        #dashboard { display: none; width: 95%; max-width: 500px; padding: 15px; }
-        .online-box { background: white; padding: 10px; border-radius: 15px; margin-bottom: 15px; display: flex; justify-content: space-around; font-size: 0.8rem; border-left: 5px solid #4CAF50; }
-        .status-dot { height: 8px; width: 8px; background-color: #4CAF50; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
-        
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-    </style>
-</head>
-<body>
-
-    <div id="login-screen" class="login-card">
-        <h2 style="color: var(--main-pink);">Welcome</h2>
-        <p style="font-size: 0.9rem; color: #888;">Enter your name and secret key</p>
-        <input type="text" id="user-name" placeholder="Apka Naam">
-        <input type="password" id="user-pass" placeholder="Secret Password">
-        <button onclick="checkLogin()">Enter Secret World</button>
+<div id="dashboard">
+    <div class="online-box">
+        <div><span class="status-dot"></span> <span id="display-name">User</span>: Online</div>
+        <div id="login-time" style="color: #666;">Time: 00:00</div>
+        <button onclick="logout()" style="width: auto; padding: 5px 15px; background: #ff4d4d; border-radius: 10px;">OFF</button>
     </div>
 
-    <div id="dashboard">
-        <div class="online-box">
-            <div><span class="status-dot"></span> <span id="display-name">User</span>: Online</div>
-            <div id="login-time" style="color: #666;">Time: 00:00</div>
-            <button onclick="logout()" style="width: auto; padding: 5px 15px; background: #ff4d4d;">OFF</button>
-        </div>
-        
-        <div class="login-card" style="width: auto;">
-            <h3 style="color: var(--main-pink); margin: 0;">Hamari Secret Dunia</h3>
-            <p style="font-style: italic; font-size: 0.85rem;">"N...a, Special for you..."</p>
-            <hr border="0" style="border-top: 1px solid #eee;">
-            <p style="color: #999;">Phase 2: Note Bar & Message Status Coming Soon...</p>
-        </div>
+    <div class="login-card" style="width: auto; margin-bottom: 15px; border-left: 5px solid var(--main-pink);">
+        <h4 style="margin: 0; color: var(--main-pink); font-size: 0.8rem;">Note for Us:</h4>
+        <textarea id="note-text" placeholder="Write something... (e.g., kesy hen ap)" 
+            style="width: 90%; border: none; background: transparent; font-style: italic; margin-top: 5px; outline: none;"></textarea>
+        <div id="note-info" style="font-size: 0.65rem; color: #aaa; text-align: right;">Last edited: Just now</div>
     </div>
 
-    <script>
-        function checkLogin() {
-            const name = document.getElementById('user-name').value;
-            const pass = document.getElementById('user-pass').value;
+    <div class="login-card" style="width: auto;">
+        <h3 style="color: var(--main-pink); margin: 0;">Hamari Secret Dunia</h3>
+        <p style="font-style: italic; font-size: 0.85rem;">"N...a, Special for you..."</p>
+        <hr border="0" style="border-top: 1px solid #eee;">
+        
+        <div id="buttons-container">
+            <p style="color: #999; font-size: 0.8rem;">Agle Marhale: Message Status & Buttons...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let heartbeatTimer;
+
+    function checkLogin() {
+        const name = document.getElementById('user-name').value;
+        const pass = document.getElementById('user-pass').value;
+        
+        if((name.toLowerCase() === 'awais' && pass === '37143') || 
+           (name.toLowerCase() === 'nisha' && pass === 'n37143')) {
             
-            // Basic Logic (Nisha aur Awais ke liye)
-            if((name.toLowerCase() === 'awais' && pass === '37143') || 
-               (name.toLowerCase() === 'nisha' && pass === 'n37143')) {
-                
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('display-name').innerText = name;
-                
-                const now = new Date();
-                document.getElementById('login-time').innerText = "Login: " + now.getHours() + ":" + now.getMinutes();
-                
-                // Yahan hum Google Sheets ko update karne ka code kal add karenge
-            } else {
-                alert("Ghalat Name ya Password!");
-            }
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('display-name').innerText = name;
+            
+            const now = new Date();
+            document.getElementById('login-time').innerText = "On: " + now.getHours() + ":" + now.getMinutes();
+            
+            // Start Heartbeat System
+            startHeartbeat(name);
+        } else {
+            alert("Ghalat Name ya Password!");
         }
+    }
 
-        function logout() {
-            // "OFF" button click karne par dobara login page
-            location.reload();
-        }
-    </script>
-</body>
-</html>
+    function startHeartbeat(username) {
+        // Har 2 minute baad "Online" signal bhejega
+        heartbeatTimer = setInterval(() => {
+            console.log(username + " is still online...");
+            // Kal yahan Google Sheet ka link add karenge
+        }, 120000); 
+    }
+
+    function logout() {
+        clearInterval(heartbeatTimer);
+        alert("Logging OFF... Time recorded.");
+        location.reload(); // Wapis login page par
+    }
+
+    // Browser band hone par alert (Basic protection)
+    window.onbeforeunload = function() {
+        // 3 minute wala auto-offline logic Google Sheet handle karegi
+        return null;
+    };
+</script>
