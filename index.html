@@ -12,7 +12,7 @@
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; }
         .btn { background: white; padding: 15px; border-radius: 12px; text-align: center; color: #d88a8a; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #fce4ec; font-size: 0.9rem; }
         .btn:hover { background: #ffebee; }
-        footer { margin-top: 30px; font-size: 0.8rem; color: #d88a8a; font-weight: bold; }
+        footer { margin-top: 30px; font-size: 0.8rem; color: #d88a8a; font-weight: bold; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -26,8 +26,21 @@
 
     <footer>R.m. Protected - <span id="years-count">10</span> Years of Trust</footer>
 
+    <div id="secret-message-box" style="width: 100%; max-width: 400px; padding: 20px; border: 2px solid #ff69b4; border-radius: 15px; text-align: center; background-color: #fff0f5; box-sizing: border-box;">
+        <h3 style="color: #ff69b4; margin-bottom: 15px; margin-top: 0;">💌 Secret Emergency Notes</h3>
+        
+        <div id="msg-status" style="margin-bottom: 10px; font-weight: bold; color: #555;">
+            Status: <span id="status-text">No New Messages</span> 
+            <span id="status-dot" style="height: 10px; width: 10px; background-color: grey; border-radius: 50%; display: inline-block;"></span>
+        </div>
+
+        <button onclick="writeMessage()" style="background: #ff69b4; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; width: 100%;">✍️ Write & Set NEW</button>
+        
+        <button onclick="readMessages()" id="read-btn" style="background: #4facfe; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; width: 100%;">📖 Read Old Messages</button>
+    </div>
+
     <script>
-        // --- 1. SETTINGS: Yahan naye buttons aur links add karein ---
+        // --- 1. SETTINGS ---
         const myButtons = [
             { name: "1. Chat Room 1", url: "https://hack.chat/?r.m." },
             { name: "2. Chat Room 2", url: "https://hack.chat/?r.m.37143" },
@@ -35,105 +48,4 @@
             { name: "4. Protected Text", url: "https://www.protectedtext.com/r.m." },
             { name: "5. Paid Netflix", url: "https://www.netflix.com/pk/a6337415@gmail.com" },
             { name: "6. Padlet Memory", url: "https://padlet.com/a6337415/r-m-padlet-8ekdzmdlp3lt9mrj" },
-            { name: "7. PC Sharing", url: "https://drive.google.com/drive/folders/1yHexmY0ha8D0oFJcFVRO3IXc2GgI-ZX5?usp=sharing" },
-            // Agla button add karne ke liye bas neeche wali line jaisi ek aur line likhen:
-            // { name: "8. New Button", url: "https://..." },
-        ];
-
-        // --- 2. Auto-Generate Buttons ---
-        const menuGrid = document.getElementById('main-menu');
-        myButtons.forEach(button => {
-            const btnDiv = document.createElement('div');
-            btnDiv.className = 'btn';
-            btnDiv.innerText = button.name;
-            btnDiv.onclick = () => askPass(button.url);
-            menuGrid.appendChild(btnDiv);
-        });
-
-        // --- 3. Password Protection ---
-        function askPass(link) {
-            if(!link || link === "PASTE_DRIVE_LINK_HERE" || link === "") {
-                alert("N...a, ye rasta abhi tayar ho raha hai...");
-                return;
-            }
-            var pass = prompt("Is raaste ka password hai. (Hamara 8 digit Code)");
-            if(pass === "37143Abc") {
-                window.location.href = link;
-            } else {
-                alert("Ghalat Password! Janab cam code try karen.");
-            }
-        }
-
-        // --- 4. Auto-Update Years (2014 se ab tak) ---
-        function updateYears() {
-            const startDate = new Date('2014-12-28'); 
-            const today = new Date();
-            let years = today.getFullYear() - startDate.getFullYear();
-            const monthDiff = today.getMonth() - startDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < startDate.getDate())) {
-                years--;
-            }
-            document.getElementById('years-count').innerHTML = years;
-        }
-        updateYears();
-    </script>
-
-    <div id="secret-message-box" style="margin-top: 40px; padding: 20px; border: 2px solid #ff69b4; border-radius: 15px; text-align: center; background-color: #fff0f5;">
-    <h3 style="color: #ff69b4; margin-bottom: 15px;">💌 Secret Emergency Notes</h3>
-    
-    <div id="msg-status" style="margin-bottom: 10px; font-weight: bold; color: #555;">
-        Status: <span id="status-text">No New Messages</span> 
-        <span id="status-dot" style="height: 10px; width: 10px; background-color: grey; border-radius: 50%; display: inline-block;"></span>
-    </div>
-
-    <button onclick="writeMessage()" style="background: #ff69b4; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; width: 220px;">✍️ Write & Set NEW</button>
-    
-    <button onclick="readMessages()" id="read-btn" style="background: #4facfe; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; width: 220px;">📖 Read Old Messages</button>
-</div>
-
-<script>
-// Ye function check karega ke pehle se koi message "New" to nahi set
-window.onload = function() {
-    if(localStorage.getItem("msgState") === "new") {
-        setNewStyle();
-    }
-};
-
-function writeMessage() {
-    var pass = prompt("Enter Secret Code to Write:");
-    if (pass == "1234") { 
-        // Status ko "New" par set kar dega
-        localStorage.setItem("msgState", "new");
-        setNewStyle();
-        window.open("YAHAN_FORM_KA_LINK_DALEN", "_blank"); 
-    } else {
-        alert("Ghalat Password!");
-    }
-}
-
-function readMessages() {
-    var pass = prompt("Enter Secret Code to Read:");
-    if (pass == "5678") {
-        // Parhne ke baad status wapas "Old" ho jayega
-        localStorage.setItem("msgState", "old");
-        setOldStyle();
-        window.open("https://docs.google.com/spreadsheets/d/1XdiyX1CuvZ8fHNZe-0WpK4g1ri50kgoWmwpIMrSUX_E/edit?usp=sharing", "_blank");
-    } else {
-        alert("Ghalat Password!");
-    }
-}
-
-function setNewStyle() {
-    document.getElementById("status-text").innerText = "NEW MESSAGE ALERT!";
-    document.getElementById("status-dot").style.backgroundColor = "red";
-    document.getElementById("read-btn").innerText = "📖 NEW MESSAGE (Read Now)";
-}
-
-function setOldStyle() {
-    document.getElementById("status-text").innerText = "All Messages Read";
-    document.getElementById("status-dot").style.backgroundColor = "grey";
-    document.getElementById("read-btn").innerText = "📖 Read Old Messages";
-}
-</script>
-</body>
-</html>
+            { name: "7. PC Sharing", url: "
