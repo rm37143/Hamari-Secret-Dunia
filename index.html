@@ -26,7 +26,7 @@
 
     <footer>R.m. Protected - <span id="years-count">10</span> Years of Trust</footer>
 
-    <div id="secret-message-box" style="width: 100%; max-width: 400px; padding: 20px; border: 2px solid #ff69b4; border-radius: 15px; text-align: center; background-color: #fff0f5; box-sizing: border-box;">
+    <div id="secret-message-box" style="width: 100%; max-width: 400px; padding: 20px; border: 2px solid #ff69b4; border-radius: 15px; text-align: center; background-color: #fff0f5; box-sizing: border-box; margin-top: 20px; margin-bottom: 50px;">
         <h3 style="color: #ff69b4; margin-bottom: 15px; margin-top: 0;">💌 Secret Emergency Notes</h3>
         
         <div id="msg-status" style="margin-bottom: 10px; font-weight: bold; color: #555;">
@@ -53,7 +53,6 @@
 
         // --- 2. Initialize Page ---
         window.onload = function() {
-            // Generate Buttons
             const menuGrid = document.getElementById('main-menu');
             myButtons.forEach(button => {
                 const btnDiv = document.createElement('div');
@@ -63,10 +62,8 @@
                 menuGrid.appendChild(btnDiv);
             });
 
-            // Update Years
             updateYears();
 
-            // Check Message Status
             if(localStorage.getItem("msgState") === "new") {
                 setNewStyle();
             }
@@ -92,7 +89,7 @@
             if (pass == "1234") { 
                 localStorage.setItem("msgState", "new");
                 setNewStyle();
-                // APNA FORM LINK YAHAN DALEN
+                // APNA FORM LINK YAHAN DALEN (Quotes ke andar)
                 window.open("PASTE_YOUR_GOOGLE_FORM_LINK_HERE", "_blank"); 
             } else { alert("Ghalat Password!"); }
         }
@@ -102,6 +99,7 @@
             if (pass == "5678") {
                 localStorage.setItem("msgState", "old");
                 setOldStyle();
+                // Yeh aapki sheet ka link hai
                 window.open("https://docs.google.com/spreadsheets/d/1XdiyX1CuvZ8fHNZe-0WpK4g1ri50kgoWmwpIMrSUX_E/edit?usp=sharing", "_blank");
             } else { alert("Ghalat Password!"); }
         }
