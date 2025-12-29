@@ -12,7 +12,7 @@
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; }
         .btn { background: white; padding: 15px; border-radius: 12px; text-align: center; color: #d88a8a; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #fce4ec; font-size: 0.9rem; }
         .btn:hover { background: #ffebee; }
-        footer { margin-top: 30px; font-size: 0.7rem; color: #ccc; }
+        footer { margin-top: 30px; font-size: 0.8rem; color: #d88a8a; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -22,24 +22,37 @@
         <p class="msg">"N...a, Har button ke peeche apke liye kuch Entertainment hai..."</p>
     </div>
 
-    <div class="menu-grid">
-        <div class="btn" onclick="askPass('https://hack.chat/?r.m.')">1. Chat Room 1</div>
-        <div class="btn" onclick="askPass('https://hack.chat/?r.m.37143')">2. Chat Room 2</div>
-        <div class="btn" onclick="askPass('https://pin.it/776hu55Fp')">3. Pinterest</div>
-        <div class="btn" onclick="askPass('https://www.protectedtext.com/r.m.')">3. Protected Text</div>
-        <div class="btn" onclick="askPass('https://www.netflix.com/pk/a6337415@gmail.com')">5. Paid Netflix</div>
-        <div class="btn" onclick="askPass('https://padlet.com/a6337415/r-m-padlet-8ekdzmdlp3lt9mrj')">6. Padlet Memory</div>
-        <div class="btn" onclick="askPass('')">7. Coming Soon</div>
-        <div class="btn" onclick="askPass('')">8. Coming Soon</div>
-        <div class="btn" onclick="askPass('')">9. Coming Soon</div>
-        <div class="btn" onclick="askPass('')">10. Coming Soon</div>
-    </div>
+    <div class="menu-grid" id="main-menu"></div>
 
-    <footer>R.m. Protected - 10 Years of Trust</footer>
+    <footer>R.m. Protected - <span id="years-count">10</span> Years of Trust</footer>
 
     <script>
+        // --- 1. SETTINGS: Yahan naye buttons aur links add karein ---
+        const myButtons = [
+            { name: "1. Chat Room 1", url: "https://hack.chat/?r.m." },
+            { name: "2. Chat Room 2", url: "https://hack.chat/?r.m.37143" },
+            { name: "3. Pinterest", url: "https://pin.it/776hu55Fp" },
+            { name: "4. Protected Text", url: "https://www.protectedtext.com/r.m." },
+            { name: "5. Paid Netflix", url: "https://www.netflix.com/pk/a6337415@gmail.com" },
+            { name: "6. Padlet Memory", url: "https://padlet.com/a6337415/r-m-padlet-8ekdzmdlp3lt9mrj" },
+            { name: "7. PC Memory (Movies)", url: "PASTE_DRIVE_LINK_HERE" },
+            // Agla button add karne ke liye bas neeche wali line jaisi ek aur line likhen:
+            // { name: "8. New Button", url: "https://..." },
+        ];
+
+        // --- 2. Auto-Generate Buttons ---
+        const menuGrid = document.getElementById('main-menu');
+        myButtons.forEach(button => {
+            const btnDiv = document.createElement('div');
+            btnDiv.className = 'btn';
+            btnDiv.innerText = button.name;
+            btnDiv.onclick = () => askPass(button.url);
+            menuGrid.appendChild(btnDiv);
+        });
+
+        // --- 3. Password Protection ---
         function askPass(link) {
-            if(link === "") {
+            if(!link || link === "PASTE_DRIVE_LINK_HERE" || link === "") {
                 alert("N...a, ye rasta abhi tayar ho raha hai...");
                 return;
             }
@@ -50,6 +63,19 @@
                 alert("Ghalat Password! Janab g Dobara koshish karen.");
             }
         }
+
+        // --- 4. Auto-Update Years (2014 se ab tak) ---
+        function updateYears() {
+            const startDate = new Date('2014-12-28'); 
+            const today = new Date();
+            let years = today.getFullYear() - startDate.getFullYear();
+            const monthDiff = today.getMonth() - startDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < startDate.getDate())) {
+                years--;
+            }
+            document.getElementById('years-count').innerHTML = years;
+        }
+        updateYears();
     </script>
 
 </body>
