@@ -1,69 +1,129 @@
-<div id="dashboard">
-    <div class="online-box">
-        <div><span class="status-dot"></span> <span id="display-name">User</span>: Online</div>
-        <div id="login-time" style="color: #666;">Time: 00:00</div>
-        <button onclick="logout()" style="width: auto; padding: 5px 15px; background: #ff4d4d; border-radius: 10px;">OFF</button>
-    </div>
-
-    <div class="login-card" style="width: auto; margin-bottom: 15px; border-left: 5px solid var(--main-pink);">
-        <h4 style="margin: 0; color: var(--main-pink); font-size: 0.8rem;">Note for Us:</h4>
-        <textarea id="note-text" placeholder="Write something... (e.g., kesy hen ap)" 
-            style="width: 90%; border: none; background: transparent; font-style: italic; margin-top: 5px; outline: none;"></textarea>
-        <div id="note-info" style="font-size: 0.65rem; color: #aaa; text-align: right;">Last edited: Just now</div>
-    </div>
-
-    <div class="login-card" style="width: auto;">
-        <h3 style="color: var(--main-pink); margin: 0;">Hamari Secret Dunia</h3>
-        <p style="font-style: italic; font-size: 0.85rem;">"N...a, Special for you..."</p>
-        <hr border="0" style="border-top: 1px solid #eee;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Project - Our Secret World</title>
+    <style>
+        :root { --main-pink: #ff85a2; --glass: rgba(255, 255, 255, 0.85); --bg-gradient: linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%); }
+        body { background: var(--bg-gradient); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
         
-        <div id="buttons-container">
-            <p style="color: #999; font-size: 0.8rem;">Agle Marhale: Message Status & Buttons...</p>
+        /* Glassmorphism Cards */
+        .card { background: var(--glass); backdrop-filter: blur(15px); padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.5); text-align: center; }
+        
+        /* Login Screen */
+        #login-screen { width: 300px; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 30px; outline: none; text-align: center; font-size: 1rem; }
+        .btn-main { background: var(--main-pink); color: white; border: none; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; box-shadow: 0 4px 15px rgba(255,133,162,0.3); }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,133,162,0.4); }
+
+        /* Dashboard Area */
+        #dashboard { display: none; width: 95%; max-width: 450px; height: 90vh; overflow-y: auto; padding: 10px; }
+        .online-box { background: white; padding: 12px; border-radius: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-left: 6px solid #4CAF50; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .status-dot { height: 10px; width: 10px; background-color: #4CAF50; border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 1.5s infinite; }
+        
+        /* Note Bar Styling */
+        .note-container { text-align: left; margin-bottom: 20px; border-left: 6px solid var(--main-pink); }
+        textarea { width: 100%; border: none; background: transparent; font-size: 1rem; font-style: italic; color: #444; resize: none; margin-top: 10px; outline: none; min-height: 60px; }
+        .timestamp { font-size: 0.7rem; color: #999; text-align: right; margin-top: 5px; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .btn-off { background: #ff4d4d; color: white; border: none; padding: 6px 15px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="card">
+        <h2 style="color: var(--main-pink); margin-bottom: 5px;">Welcome</h2>
+        <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Enter Secret Keys to Enter</p>
+        <input type="text" id="user-name" placeholder="Name (e.g. nisha)">
+        <input type="password" id="user-pass" placeholder="Password">
+        <button class="btn-main" onclick="checkLogin()">Unlock World</button>
+    </div>
+
+    <div id="dashboard">
+        <div class="online-box">
+            <div><span class="status-dot"></span> <b id="display-name">User</b> is Online</div>
+            <div id="login-time" style="color: #666;">On: --:--</div>
+            <button class="btn-off" onclick="logout()">OFF</button>
+        </div>
+
+        <div class="card note-container">
+            <h4 style="margin: 0; color: var(--main-pink); font-size: 0.9rem;">Special Note for Us:</h4>
+            <textarea id="note-text" placeholder="Type your note here... (e.g. kesy hen ap?)"></textarea>
+            <div id="note-info" class="timestamp">Last saved: <span id="save-time">Never</span></div>
+        </div>
+
+        <div class="card" style="margin-top: 15px;">
+            <h3 style="color: var(--main-pink); margin: 0 0 10px 0;">Hamari Secret Dunia</h3>
+            <p style="font-style: italic; font-size: 0.85rem; color: #666;">"N...a, 10 Years of Trust & Love"</p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            
+            <div id="message-status" style="background: #fdf2f4; padding: 10px; border-radius: 12px; font-size: 0.85rem; color: var(--main-pink);">
+                <b>Status:</b> Checking for messages...
+            </div>
+            
+            <p style="color: #bbb; font-size: 0.75rem; margin-top: 20px;">Phase 3: Custom Buttons & Chat Coming Soon...</p>
         </div>
     </div>
-</div>
 
-<script>
-    let heartbeatTimer;
+    <script>
+        let heartbeatInterval;
 
-    function checkLogin() {
-        const name = document.getElementById('user-name').value;
-        const pass = document.getElementById('user-pass').value;
-        
-        if((name.toLowerCase() === 'awais' && pass === '37143') || 
-           (name.toLowerCase() === 'nisha' && pass === 'n37143')) {
-            
+        function checkLogin() {
+            const nameInput = document.getElementById('user-name').value.toLowerCase().trim();
+            const passInput = document.getElementById('user-pass').value.trim();
+
+            // Login Logic for Awais and Nisha
+            if ((nameInput === 'awais' && passInput === '37143') || 
+                (nameInput === 'nisha' && passInput === 'n37143')) {
+                
+                showDashboard(nameInput);
+            } else {
+                alert("Incorrect Name or Password! Try again.");
+            }
+        }
+
+        function showDashboard(user) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('display-name').innerText = name;
+            document.getElementById('display-name').innerText = user.charAt(0).toUpperCase() + user.slice(1);
             
+            // Set Login Time
             const now = new Date();
-            document.getElementById('login-time').innerText = "On: " + now.getHours() + ":" + now.getMinutes();
-            
-            // Start Heartbeat System
-            startHeartbeat(name);
-        } else {
-            alert("Ghalat Name ya Password!");
+            const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('login-time').innerText = "On: " + timeStr;
+
+            // Start Online Signal (Heartbeat)
+            startHeartbeat(user);
         }
-    }
 
-    function startHeartbeat(username) {
-        // Har 2 minute baad "Online" signal bhejega
-        heartbeatTimer = setInterval(() => {
-            console.log(username + " is still online...");
-            // Kal yahan Google Sheet ka link add karenge
-        }, 120000); 
-    }
+        function startHeartbeat(user) {
+            console.log("Heartbeat started for: " + user);
+            // Har 2 min baad online signal record hoga (Sheet link kal add karenge)
+            heartbeatInterval = setInterval(() => {
+                console.log(user + " is active...");
+            }, 120000);
+        }
 
-    function logout() {
-        clearInterval(heartbeatTimer);
-        alert("Logging OFF... Time recorded.");
-        location.reload(); // Wapis login page par
-    }
+        // Note Bar Time Auto-update
+        document.getElementById('note-text').addEventListener('input', function() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + " " + now.getHours() + ":" + now.getMinutes();
+            document.getElementById('save-time').innerText = dateStr;
+            // Kal yahan sheet par auto-save ka function daalenge
+        });
 
-    // Browser band hone par alert (Basic protection)
-    window.onbeforeunload = function() {
-        // 3 minute wala auto-offline logic Google Sheet handle karegi
-        return null;
-    };
-</script>
+        function logout() {
+            clearInterval(heartbeatInterval);
+            alert("Logging out and saving offline time...");
+            location.reload();
+        }
+
+        // Security: Browser band hone se pehle check
+        window.onbeforeunload = function() {
+            return null; 
+        };
+    </script>
+</body>
+</html>
