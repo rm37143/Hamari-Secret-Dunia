@@ -86,17 +86,17 @@
         // --- 3. Message Logic ---
         function writeMessage() {
             var pass = prompt("Enter Secret Code to Write:");
-            if (pass == "1234") { 
+            if (pass == "37143Abc") { 
                 localStorage.setItem("msgState", "new");
                 setNewStyle();
                 // APNA FORM LINK YAHAN DALEN (Quotes ke andar)
-                window.open("PASTE_YOUR_GOOGLE_FORM_LINK_HERE", "_blank"); 
+                window.open("https://docs.google.com/spreadsheets/d/1XdiyX1CuvZ8fHNZe-0WpK4g1ri50kgoWmwpIMrSUX_E/edit?usp=sharing", "_blank"); 
             } else { alert("Ghalat Password!"); }
         }
 
         function readMessages() {
             var pass = prompt("Enter Secret Code to Read:");
-            if (pass == "5678") {
+            if (pass == "37143Abc") {
                 localStorage.setItem("msgState", "old");
                 setOldStyle();
                 // Yeh aapki sheet ka link hai
