@@ -3,54 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - New Project</title>
+    <title>New Project - Secret World</title>
     <style>
-        body { background: #fce4ec; font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 25px; outline: none; text-align: center; }
-        .btn { background: #ff85a2; color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; font-weight: bold; cursor: pointer; }
-        #dashboard { display: none; width: 90%; max-width: 400px; }
-        .status { background: white; padding: 10px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-around; font-size: 0.8rem; border-left: 5px solid #4CAF50; }
+        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); }
+        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 400px; text-align: center; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 15px; }
+        input { width: 85%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 25px; outline: none; text-align: center; }
+        .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
+        #dashboard { display: none; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 10px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.85rem; border-left: 6px solid #2ecc71; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .online-dot { height: 12px; width: 12px; background: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px #2ecc71; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 50px; font-size: 1rem; }
+        .time-tag { font-size: 0.7rem; color: #aaa; text-align: right; margin-top: 5px; }
     </style>
 </head>
 <body>
 
+<div class="container">
     <div id="login-screen" class="card">
-        <h2 style="color: #ff85a2;">Welcome</h2>
-        <p style="color: #888; font-size: 0.8rem;">Enter your Secret Keys</p>
-        <input type="text" id="u-name" placeholder="Name (awais/nisha)">
-        <input type="password" id="u-pass" placeholder="Password">
-        <button class="btn" onclick="login()">Unlock World</button>
+        <h2 style="color: var(--pink); margin-top: 0;">Welcome</h2>
+        <input type="text" id="u-name" placeholder="Enter Name">
+        <input type="password" id="u-pass" placeholder="Enter Key">
+        <button class="btn-main" onclick="checkAuth()">Unlock World</button>
     </div>
 
     <div id="dashboard">
-        <div class="status">
-            <div><b>●</b> <span id="user-name">User</span> Online</div>
-            <div id="time">00:00</div>
-            <button onclick="location.reload()" style="background:red; color:white; border:none; border-radius:5px; padding:2px 8px;">OFF</button>
+        <div class="status-bar">
+            <div><span class="online-dot"></span> <b id="user-display">User</b> Online</div>
+            <div id="on-time">00:00</div>
+            <button onclick="location.reload()" style="background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.75rem; font-weight:bold; cursor:pointer;">OFF</button>
         </div>
-        <div class="card" style="width: auto; text-align: left;">
-            <h4 style="margin:0; color:#ff85a2;">Note Bar:</h4>
-            <textarea id="note" style="width:100%; border:none; margin-top:5px; font-style:italic;" placeholder="Kesy hen ap?"></textarea>
+
+        <div class="card" style="text-align: left;">
+            <h4 style="margin:0; font-size:0.9rem; color:var(--pink);">Note Bar:</h4>
+            <textarea id="note" placeholder="Type Here..."></textarea>
+            <div class="time-tag">Last saved: <span id="n-time">--:--</span></div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin:0; color:var(--pink);">Hamari Secret Dunia</h3>
+            <p style="font-size:0.8rem; font-style:italic; color:#666;">"N...a, Special for you..."</p>
+            <hr style="border:0; border-top:1px solid #f5f5f5; margin:15px 0;">
+            <div id="status-msg" style="background:#fffafa; padding:12px; border-radius:12px; font-size:0.85rem; color:var(--pink); border: 1px solid #ffebee;">
+                <b>Status:</b> Checking Messages...
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function login() {
-            var n = document.getElementById('u-name').value.toLowerCase().trim();
-            var p = document.getElementById('u-pass').value;
-            
-            if((n === 'awais' && p === '37143') || (n === 'nisha' && p === 'n37143')) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('user-name').innerText = n;
-                var d = new Date();
-                document.getElementById('time').innerText = d.getHours() + ":" + d.getMinutes();
-            } else {
-                alert("Wrong Key!");
-            }
+<script>
+    function formatTime() {
+        const d = new Date();
+        const hrs = d.getHours().toString().padStart(2, '0');
+        const mins = d.getMinutes().toString().padStart(2, '0');
+        return hrs + ":" + mins;
+    }
+
+    function checkAuth() {
+        const n = document.getElementById('u-name').value.toLowerCase().trim();
+        const p = document.getElementById('u-pass').value.trim();
+        
+        if((n === 'awais' && p === '37143') || (n === 'nisha' && p === 'n37143')) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('user-display').innerText = n.charAt(0).toUpperCase() + n.slice(1);
+            document.getElementById('on-time').innerText = formatTime();
+        } else {
+            alert("Unauthorized Access!");
         }
-    </script>
+    }
+
+    document.getElementById('note').addEventListener('input', function() {
+        document.getElementById('n-time').innerText = formatTime();
+    });
+</script>
+
 </body>
 </html>
 
