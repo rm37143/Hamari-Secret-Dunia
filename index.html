@@ -3,36 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 4 Stable</title>
+    <title>Secret World - Phase 4 Bell</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
+        .welcome-title { font-size: 2.2rem; font-weight: 800; margin: 5px 0; background: linear-gradient(to right, #ff85a2, #ff4d4d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 15px; }
         input { width: 85%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 25px; outline: none; text-align: center; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; }
-        #dashboard, #chat-screen { display: none; }
+        #dashboard { display: none; }
         .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #f2f2f2; padding-bottom: 5px; }
+        .user-info { display: flex; align-items: center; }
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
-        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
+        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1rem; filter: grayscale(1); transition: 0.3s; }
         .bell-active { filter: grayscale(0); transform: scale(1.2); }
-        
-        .chat-btn { background: #34495e; color: white; border: none; padding: 14px; border-radius: 25px; width: 100%; font-weight: bold; cursor: pointer; margin: 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .blink-dot { height: 12px; width: 12px; background-color: var(--green); border-radius: 50%; display: none; box-shadow: 0 0 8px var(--green); }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        .is-blinking { display: inline-block; animation: blink 1s infinite; }
-
-        #chat-box { height: 300px; overflow-y: auto; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: left; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .msg { margin-bottom: 10px; padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; }
-        .msg-me { background: #ff85a2; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .msg-them { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eee; }
-        
-        textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
+        textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
     </style>
 </head>
 <body onload="clearInputs()">
@@ -41,49 +32,37 @@
     <h2 class="main-title">Hamari Secret Dunia</h2>
 
     <div id="login-screen" class="card">
-        <h1 style="color:var(--pink)">Welcome</h1>
-        <input type="text" id="u-name" placeholder="Enter Name" autocomplete="off">
-        <input type="password" id="u-pass" placeholder="Enter Key" autocomplete="new-password">
+        <h1 class="welcome-title">Welcome</h1>
+        <input type="text" id="u-name" placeholder="Enter Name">
+        <input type="password" id="u-pass" placeholder="Enter Key">
         <button class="btn-main" onclick="checkAuth()">Unlock World</button>
     </div>
 
     <div id="dashboard">
         <div class="status-bar" id="status-container">Connecting...</div>
 
-        <button class="chat-btn" onclick="openChat()">
-            <span id="chat-blink" class="blink-dot"></span> Secret Chat Room 💬
-        </button>
-
         <div class="card" style="text-align: left; border-left: 5px solid var(--pink);">
-            <textarea id="note-input" placeholder="Write Note..."></textarea>
-            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; float:right;">Send</button>
+            <h4 style="margin:0; font-size:0.8rem; color:var(--pink);">Write New Note:</h4>
+            <textarea id="note-input" placeholder="Type Here..."></textarea>
+            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; font-size:0.8rem; cursor:pointer; float:right;">Send</button>
             <div style="clear:both;"></div>
         </div>
 
-        <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px solid #ccc; background:white; padding:12px; cursor:pointer; border-radius:25px; color:#888;">Show Locked Note 🔒</button>
-        <div id="prev-note-display" style="display:none;" class="card">
-            <div id="prev-note-text" style="font-style: italic; color: #555;">Loading...</div>
-            <button onclick="lockNoteAgain()" style="font-size:0.7rem; color:red; border:none; background:none; cursor:pointer; margin-top:10px;">[ Close ]</button>
+        <div class="card" style="text-align: left; background: #f9f9f9; border-left: 5px solid #bbb;">
+            <h4 style="margin:0; font-size:0.75rem; color:#777;">Previous Note:</h4>
+            <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px dashed #ccc; background:none; padding:10px; cursor:pointer; border-radius:15px;">Show Locked Note 🔒</button>
+            <div id="prev-note-display" style="display:none;">
+                <div id="prev-note-text" style="font-style: italic; color: #555; margin-top:5px; font-size: 0.95rem;">Loading...</div>
+                <div id="prev-note-info" style="font-size: 0.65rem; color: #aaa; text-align: right; margin-top: 5px;">--:--</div>
+                <button onclick="lockNoteAgain()" style="font-size:0.6rem; color:red; border:none; background:none; cursor:pointer; float:right; margin-top:5px;">[ Close & Lock ]</button>
+            </div>
         </div>
-    </div>
-
-    <div id="chat-screen" class="card" style="padding: 15px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <b style="color:var(--pink)">Live Secret Chat</b>
-            <button onclick="closeChat()" style="background:#eee; border:none; border-radius:10px; padding:5px 12px; cursor:pointer; font-size:0.8rem;">Exit</button>
-        </div>
-        <div id="chat-box">Loading...</div>
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="chat-input" style="width:75%; margin:0; border-radius:15px; text-align:left; padding-left:15px;" placeholder="Message...">
-            <button onclick="sendChat()" style="width:25%; background:var(--pink); color:white; border:none; border-radius:15px; font-weight:bold;">Send</button>
-        </div>
+        <button onclick="viewFullHistory()" style="background:none; border:1px solid #ccc; color:#888; padding:10px; border-radius:20px; font-size:0.75rem; width:100%; margin-top:10px; cursor:pointer;">View All Notes History 🔒</button>
     </div>
 </div>
 
 <script>
-    // Updated with your NEW Stable URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-zOskhfh75OE1J5dnOid929mHkIw0kGBOacaAbny3mR6ill67-qXZu9hNF8PBwLqT/exec';
-    
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwe_qtaFURKaKeD6FX-O7yBHFebq7Qwkiznrf9PjUZMzKe5Hi1JYGsNmsQr1zSpC_7c/exec';
     let currentUser = "";
     let myBell = "OFF";
     let lastStatusMap = {};
@@ -100,89 +79,74 @@
             document.getElementById('dashboard').style.display = 'block';
             updateStatus("Online");
             refreshData(); 
-            setInterval(refreshData, 4000); 
-        } else { alert("Unauthorized!"); }
+            setInterval(refreshData, 5000); 
+            alert("Sunein: Login ke baad ek baar screen par click karein taake Bell active ho jaye!");
+        } else { alert("Unauthorized!"); clearInputs(); }
     }
 
     function updateStatus(status) {
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: currentUser, status: status }) });
     }
 
+    function toggleBell() {
+        myBell = (myBell === "OFF") ? "ON" : "OFF";
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateBell", name: currentUser, bell: myBell }) });
+        refreshData();
+    }
+
     function refreshData() {
         fetch(scriptURL).then(res => res.json()).then(data => {
             let html = "";
-            let anyoneInChat = false;
             data.onlineUsers.forEach(user => {
-                if(user.name && user.name !== "Name") {
+                if(user.name && user.name.trim() !== "" && user.name !== "Name") {
+                    const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
                     const isMe = user.name === currentUser;
                     if(isMe) myBell = user.bell;
-                    if(!isMe && user.status === "Online" && lastStatusMap[user.name] !== "Online" && myBell === "ON") { bellSound.play().catch(()=>{}); }
+
+                    // Bell Sound Logic
+                    if(!isMe && user.status === "Online" && lastStatusMap[user.name] !== "Online" && myBell === "ON") {
+                        bellSound.play().catch(() => console.log("User must interact first"));
+                    }
                     lastStatusMap[user.name] = user.status;
-                    if(!isMe && data.chatPresence[user.name] === "YES") anyoneInChat = true;
+
                     html += `<div class="user-row">
-                                <div class="user-info"><span class="dot ${user.status==='Online'?'dot-online':'dot-offline'}"></span><b>${user.name}</b></div>
-                                <div>
-                                    <span onclick="${isMe ? 'toggleBell()' : ''}" class="bell-icon ${user.bell === 'ON' ? 'bell-active' : ''}">${user.bell === 'ON' ? '🔔' : '🔕'}</span>
-                                    ${isMe ? `<button class="off-btn" onclick="logout()" style="margin-left:10px;">OFF</button>` : ''}
+                                <div class="user-info">
+                                    <span class="dot ${dotClass}"></span>
+                                    <b>${user.name}</b> <small style="margin-left:5px; color:#999;">(${user.time})</small>
+                                    <span onclick="${isMe ? 'toggleBell()' : ''}" class="bell-icon ${user.bell === 'ON' ? 'bell-active' : ''}">
+                                        ${user.bell === 'ON' ?  🔔' :  🔕'}
+                                    </span>
                                 </div>
+                                ${isMe ? `<button class="off-btn" onclick="logout()">OFF</button>` : ''}
                              </div>`;
                 }
             });
             document.getElementById('status-container').innerHTML = html;
-            document.getElementById('chat-blink').className = anyoneInChat ? "blink-dot is-blinking" : "blink-dot";
-
-            if(document.getElementById('chat-screen').style.display === 'block') {
-                let chatHtml = "";
-                data.chatMessages.forEach(m => {
-                    if(m[0] && m[0] !== "Name") {
-                        chatHtml += `<div class="msg ${m[0]===currentUser?'msg-me':'msg-them'}"><b>${m[0]}</b>: ${m[1]}</div>`;
-                    }
-                });
-                document.getElementById('chat-box').innerHTML = chatHtml;
-            }
         });
     }
 
-    function openChat() {
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('chat-screen').style.display = 'block';
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "chatPresence", name: currentUser, inChat: "YES" }) });
-    }
-
-    function closeChat() {
-        document.getElementById('chat-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "chatPresence", name: currentUser, inChat: "NO" }) });
-    }
-
-    function sendChat() {
-        const input = document.getElementById('chat-input');
-        const msg = input.value.trim();
-        if(!msg) return;
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "sendChat", name: currentUser, msg: msg }) });
-        input.value = "";
-    }
-
+    function logout() { updateStatus("Offline"); setTimeout(() => { location.reload(); }, 500); }
     function sendNote() {
         const note = document.getElementById('note-input').value.trim();
         if(!note) return;
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) }).then(() => { alert("Sent!"); document.getElementById('note-input').value = ""; });
+        document.getElementById('send-btn').innerText = "...";
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) })
+        .then(() => { alert("Note Sent!"); document.getElementById('note-input').value = ""; document.getElementById('send-btn').innerText = "Send"; lockNoteAgain(); });
     }
-
-    function toggleBell() {
-        myBell = (myBell === "OFF") ? "ON" : "OFF";
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateBell", name: currentUser, bell: myBell }) });
-    }
-
     function showLockedNote() {
-        if(prompt("Enter Password:") === "123") {
+        const pw = prompt("Enter Password (123):");
+        if(pw === "123") {
             document.getElementById('lock-btn').style.display = 'none';
             document.getElementById('prev-note-display').style.display = 'block';
-            fetch(scriptURL).then(res => res.json()).then(data => { document.getElementById('prev-note-text').innerText = data.note.name + ": " + data.note.note; });
+            fetch(scriptURL).then(res => res.json()).then(data => {
+                document.getElementById('prev-note-text').innerText = data.note.note;
+                document.getElementById('prev-note-info').innerText = data.note.name + " • " + data.note.time;
+            });
         }
     }
     function lockNoteAgain() { document.getElementById('prev-note-display').style.display = 'none'; document.getElementById('lock-btn').style.display = 'block'; }
-    function logout() { updateStatus("Offline"); setTimeout(() => { location.reload(); }, 500); }
+    function viewFullHistory() { if(prompt("Enter History Password (786):") === "786") { window.open('https://docs.google.com/spreadsheets/d/1_dDtsqDy5l_YBtIAjZfLGIQVqeoJHNYHJJqeu0oLKH4/edit', '_blank'); } }
+    window.addEventListener('beforeunload', function () { updateStatus("Offline"); });
 </script>
 </body>
 </html>
