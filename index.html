@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 3 Final Design</title>
+    <title>Secret World - Step 2 Success</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
         .welcome-title { font-size: 2.2rem; font-weight: 800; margin: 5px 0; background: linear-gradient(to right, #ff85a2, #ff4d4d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 15px; position: relative; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 15px; }
         input { width: 85%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 25px; outline: none; text-align: center; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; }
         #dashboard { display: none; }
         
-        /* Fixed Status Bar with OFF Button */
-        .status-container { background: #fff; padding: 12px 15px; border-radius: 20px; margin-bottom: 15px; border-left: 6px solid var(--green); text-align: left; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f9f9f9; padding-bottom: 4px; }
-        .user-info { display: flex; align-items: center; }
-        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        /* Fixed Status Bar Design */
+        .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; border-bottom: 1px solid #f9f9f9; padding-bottom: 4px; }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
-        .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
+        .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.7rem; cursor:pointer; }
         
-        textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 80px; font-size: 1rem; }
+        textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
     </style>
 </head>
 <body onload="clearInputs()">
@@ -40,32 +39,33 @@
     </div>
 
     <div id="dashboard">
-        <div class="status-container" id="status-list">
-            <span style="font-size: 0.7rem; color: #888;">Checking status...</span>
+        <div class="status-bar" id="status-display">
+            <div style="color:#aaa;">Loading Status...</div>
         </div>
 
         <div class="card" style="text-align: left; border-left: 5px solid var(--pink);">
             <h4 style="margin:0; font-size:0.8rem; color:var(--pink);">Write New Note:</h4>
             <textarea id="note-input" placeholder="Type Here..."></textarea>
-            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:8px 25px; font-size:0.85rem; cursor:pointer; float:right; margin-top: 5px;">Send</button>
+            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; font-size:0.8rem; cursor:pointer; float:right;">Send</button>
             <div style="clear:both;"></div>
         </div>
 
         <div class="card" style="text-align: left; background: #f9f9f9; border-left: 5px solid #bbb;">
             <h4 style="margin:0; font-size:0.75rem; color:#777;">Previous Note:</h4>
-            <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px dashed #ccc; background:none; padding:12px; cursor:pointer; border-radius:15px; color: #666;">Show Locked Note 🔒</button>
+            <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px dashed #ccc; background:none; padding:10px; cursor:pointer; border-radius:15px;">Show Locked Note 🔒</button>
             <div id="prev-note-display" style="display:none;">
-                <div id="prev-note-text" style="font-style: italic; color: #555; margin-top:8px; font-size: 1rem; line-height: 1.4;">Loading...</div>
-                <div id="prev-note-info" style="font-size: 0.7rem; color: #aaa; text-align: right; margin-top: 10px; border-top: 1px solid #eee; padding-top: 5px;">--:--</div>
-                <button onclick="lockNoteAgain()" style="font-size:0.65rem; color:red; border:none; background:none; cursor:pointer; float:right; margin-top:8px;">[ Close & Lock ]</button>
+                <div id="prev-note-text" style="font-style: italic; color: #555; margin-top:5px; font-size: 0.95rem;">Loading...</div>
+                <div id="prev-note-info" style="font-size: 0.65rem; color: #aaa; text-align: right; margin-top: 5px;">--:--</div>
+                <button onclick="lockNoteAgain()" style="font-size:0.6rem; color:red; border:none; background:none; cursor:pointer; float:right; margin-top:5px;">[ Close & Lock ]</button>
             </div>
         </div>
 
-        <button onclick="viewFullHistory()" style="background:none; border:1px solid #ccc; color:#888; padding:12px; border-radius:25px; font-size:0.8rem; width:100%; margin-top:10px; cursor:pointer;">View All Notes History 🔒</button>
+        <button onclick="viewFullHistory()" style="background:none; border:1px solid #ccc; color:#888; padding:10px; border-radius:20px; font-size:0.75rem; width:100%; margin-top:10px; cursor:pointer;">View All Notes History 🔒</button>
     </div>
 </div>
 
 <script>
+    // URL Updated to your latest deployment
     const scriptURL = 'https://script.google.com/macros/s/AKfycby3KExpNCbN_sjvIR8JU6rEQeVnvFWsOqxuUcu18UfF1EMndsUnfCPnXVXT5mpdxKz6/exec';
     const sheetURL = 'https://docs.google.com/spreadsheets/d/1_dDtsqDy5l_YBtIAjZfLGIQVqeoJHNYHJJqeu0oLKH4/edit';
     let currentUser = "";
@@ -80,8 +80,8 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             updateStatus("Online");
-            refreshData(); // Immediate load
-            setInterval(refreshData, 5000); // Auto update
+            refreshData(); // Immediate fetch
+            setInterval(refreshData, 5000); // 5 sec update
         } else { alert("Unauthorized!"); clearInputs(); }
     }
 
@@ -94,30 +94,30 @@
             let html = "";
             data.onlineUsers.forEach(user => {
                 const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
-                const isMe = user.name === currentUser;
                 html += `<div class="user-row">
-                            <div class="user-info">
-                                <span class="dot ${dotClass}"></span>
-                                <div><b>${user.name}</b> <br> <small style="color:#aaa; font-size:0.6rem;">${user.status} at ${user.time}</small></div>
-                            </div>
-                            ${isMe ? `<button class="off-btn" onclick="logout()">OFF</button>` : ''}
+                            <div><span class="dot ${dotClass}"></span><b>${user.name}</b> <small style="color:#aaa;">(${user.status} ${user.time})</small></div>
+                            <button class="off-btn" onclick="logoutUser()">OFF</button>
                          </div>`;
             });
-            document.getElementById('status-list').innerHTML = html;
+            document.getElementById('status-display').innerHTML = html;
         });
     }
 
-    function logout() { updateStatus("Offline"); setTimeout(() => { location.reload(); }, 500); }
+    function logoutUser() {
+        updateStatus("Offline");
+        setTimeout(() => { location.reload(); }, 500);
+    }
 
     function sendNote() {
         const note = document.getElementById('note-input').value.trim();
         if(!note) return;
         document.getElementById('send-btn').innerText = "...";
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) })
-        .then(() => { 
-            alert("Note Sent!"); 
-            document.getElementById('note-input').value = ""; 
-            document.getElementById('send-btn').innerText = "Send"; 
+        .then(() => {
+            document.getElementById('note-input').value = "";
+            document.getElementById('send-btn').innerText = "Send";
+            alert("Note Sent!");
+            lockNoteAgain(); 
         });
     }
 
@@ -127,19 +127,20 @@
             document.getElementById('lock-btn').style.display = 'none';
             document.getElementById('prev-note-display').style.display = 'block';
             fetch(scriptURL).then(res => res.json()).then(data => {
+                // Accessing the nested note object from new script
                 document.getElementById('prev-note-text').innerText = data.note.note;
                 document.getElementById('prev-note-info').innerText = data.note.name + " • " + data.note.time;
             }).catch(() => { document.getElementById('prev-note-text').innerText = "No note found."; });
         } else if(pw != null) { alert("Wrong Password!"); }
     }
 
-    function lockNoteAgain() { 
-        document.getElementById('prev-note-display').style.display = 'none'; 
-        document.getElementById('lock-btn').style.display = 'block'; 
+    function lockNoteAgain() {
+        document.getElementById('prev-note-display').style.display = 'none';
+        document.getElementById('lock-btn').style.display = 'block';
     }
 
-    function viewFullHistory() { 
-        if(prompt("Enter History Password (786):") === "786") { window.open(sheetURL, '_blank'); } 
+    function viewFullHistory() {
+        if(prompt("Enter History Password (786):") === "786") { window.open(sheetURL, '_blank'); }
     }
 
     window.addEventListener('beforeunload', function () { updateStatus("Offline"); });
