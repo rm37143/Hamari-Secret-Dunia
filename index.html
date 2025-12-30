@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 4 Perfect</title>
+    <title>Secret World - Stable</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -16,16 +16,20 @@
         
         #dashboard, #chat-screen { display: none; }
         
+        /* Original Status Bar */
         .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #f2f2f2; padding-bottom: 5px; }
         .user-info { display: flex; align-items: center; }
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
-        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1rem; filter: grayscale(1); transition: 0.3s; }
+        
+        /* Bell Icon Styling */
+        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
         .bell-active { filter: grayscale(0); transform: scale(1.2); }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
         
+        /* Chat Design */
         .chat-btn { background: #34495e; color: white; border: none; padding: 14px; border-radius: 25px; width: 100%; font-weight: bold; cursor: pointer; margin: 10px 0; }
         #chat-box { height: 300px; overflow-y: auto; text-align: left; margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #eee; }
         
@@ -76,7 +80,9 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-zOskhfh75OE1J5dnOid929mHkIw0kGBOacaAbny3mR6ill67-qXZu9hNF8PBwLqT/exec';
+    // YAHA APNA NAYA DEPLOYED URL PASTE KAREIN
+    const scriptURL = 'YAHA_NAYA_URL_DALEIN';
+    
     let currentUser = "";
     let myBell = "OFF";
     let lastStatusMap = {};
@@ -136,7 +142,7 @@
                 let chatHtml = "";
                 data.chatMessages.forEach(m => {
                     if(m[0] && m[0] !== "Name") {
-                        chatHtml += `<div style="margin-bottom:5px;"><b>${m[0]}:</b> ${m[1]}</div>`;
+                        chatHtml += `<div style="margin-bottom:5px; font-size:0.9rem;"><b>${m[0]}:</b> ${m[1]}</div>`;
                     }
                 });
                 document.getElementById('chat-box').innerHTML = chatHtml;
