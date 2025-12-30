@@ -15,7 +15,6 @@
         .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; }
         #dashboard { display: none; }
         
-        /* Updated Status Bar with OFF Button and Dots */
         .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #f2f2f2; padding-bottom: 5px; }
         .user-info { display: flex; align-items: center; }
@@ -66,7 +65,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwnCYXIXsHOU_U6XATtxwftnncjlZv1gRJNMNKqWgsYMGWHJvtrizUMbO5cBI6JkQ4y/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyOWo9Xy5kAmbJatwckRO5Qkla_ELoWYwIXOFTksl8lHs2V3XKgG0U2Apl75p5ehVxn/exec';
     const sheetURL = 'https://docs.google.com/spreadsheets/d/1_dDtsqDy5l_YBtIAjZfLGIQVqeoJHNYHJJqeu0oLKH4/edit';
     let currentUser = "";
 
@@ -93,14 +92,16 @@
         fetch(scriptURL).then(res => res.json()).then(data => {
             let html = "";
             data.onlineUsers.forEach(user => {
-                const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
-                html += `<div class="user-row">
-                            <div class="user-info">
-                                <span class="dot ${dotClass}"></span>
-                                <b>${user.name}</b> <small style="margin-left:5px; color:#999;">(${user.time})</small>
-                            </div>
-                            <button class="off-btn" onclick="logout()">OFF</button>
-                         </div>`;
+                if(user.name && user.name !== "Name") {
+                    const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
+                    html += `<div class="user-row">
+                                <div class="user-info">
+                                    <span class="dot ${dotClass}"></span>
+                                    <b>${user.name}</b> <small style="margin-left:5px; color:#999;">(${user.time})</small>
+                                </div>
+                                ${user.name === currentUser ? `<button class="off-btn" onclick="logout()">OFF</button>` : ''}
+                             </div>`;
+                }
             });
             document.getElementById('status-container').innerHTML = html;
         });
@@ -136,7 +137,6 @@
     function lockNoteAgain() { document.getElementById('prev-note-display').style.display = 'none'; document.getElementById('lock-btn').style.display = 'block'; }
     function viewFullHistory() { if(prompt("Enter History Password (786):") === "786") { window.open(sheetURL, '_blank'); } }
     
-    // Browser band hone par offline karne ke liye
     window.addEventListener('beforeunload', function () { updateStatus("Offline"); });
 </script>
 </body>
