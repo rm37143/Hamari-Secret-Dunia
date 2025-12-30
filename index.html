@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 4 Bell</title>
+    <title>Secret World - Final Locked</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -20,7 +20,7 @@
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
-        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1rem; filter: grayscale(1); transition: 0.3s; }
+        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
         .bell-active { filter: grayscale(0); transform: scale(1.2); }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
         textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
@@ -33,8 +33,8 @@
 
     <div id="login-screen" class="card">
         <h1 class="welcome-title">Welcome</h1>
-        <input type="text" id="u-name" placeholder="Enter Name">
-        <input type="password" id="u-pass" placeholder="Enter Key">
+        <input type="text" id="u-name" placeholder="Enter Name" autocomplete="off" spellcheck="false">
+        <input type="password" id="u-pass" placeholder="Enter Key" autocomplete="new-password">
         <button class="btn-main" onclick="checkAuth()">Unlock World</button>
     </div>
 
@@ -80,7 +80,6 @@
             updateStatus("Online");
             refreshData(); 
             setInterval(refreshData, 5000); 
-            alert("Sunein: Login ke baad ek baar screen par click karein taake Bell active ho jaye!");
         } else { alert("Unauthorized!"); clearInputs(); }
     }
 
@@ -103,9 +102,8 @@
                     const isMe = user.name === currentUser;
                     if(isMe) myBell = user.bell;
 
-                    // Bell Sound Logic
                     if(!isMe && user.status === "Online" && lastStatusMap[user.name] !== "Online" && myBell === "ON") {
-                        bellSound.play().catch(() => console.log("User must interact first"));
+                        bellSound.play().catch(() => {});
                     }
                     lastStatusMap[user.name] = user.status;
 
@@ -134,8 +132,7 @@
         .then(() => { alert("Note Sent!"); document.getElementById('note-input').value = ""; document.getElementById('send-btn').innerText = "Send"; lockNoteAgain(); });
     }
     function showLockedNote() {
-        const pw = prompt("Enter Password (123):");
-        if(pw === "123") {
+        if(prompt("Enter Password (123):") === "123") {
             document.getElementById('lock-btn').style.display = 'none';
             document.getElementById('prev-note-display').style.display = 'block';
             fetch(scriptURL).then(res => res.json()).then(data => {
