@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Step 2 Final</title>
+    <title>Secret World - Phase 2 Final</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -46,7 +46,6 @@
         <div class="card" style="text-align: left; background: #f9f9f9; border-left: 5px solid #bbb;">
             <h4 style="margin:0; font-size:0.75rem; color:#777;">Previous Note:</h4>
             <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px dashed #ccc; background:none; padding:10px; cursor:pointer; border-radius:15px;">Show Locked Note 🔒</button>
-            
             <div id="prev-note-display" style="display:none;">
                 <div id="prev-note-text" style="font-style: italic; color: #555; margin-top:5px; font-size: 0.95rem;">Loading...</div>
                 <div id="prev-note-info" style="font-size: 0.65rem; color: #aaa; text-align: right; margin-top: 5px;">--:--</div>
@@ -60,6 +59,8 @@
 
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbweQHf0eqCPdpWzEIUBL4Sffz7MD-PV-IbhI7XcpiC6betc364fHUMbzfoPl4E34Hh-Eg/exec';
+    // Sahi Sheet Link yahan hai
+    const sheetLink = 'https://docs.google.com/spreadsheets/d/1zlUq_wwmllEdhXdTrniLmazsmKhNm2p-y29UJBwftUI/edit';
 
     function clearInputs() { document.getElementById('u-name').value = ""; document.getElementById('u-pass').value = ""; }
 
@@ -92,7 +93,6 @@
         if(pw === "123") {
             document.getElementById('lock-btn').style.display = 'none';
             document.getElementById('prev-note-display').style.display = 'block';
-            document.getElementById('prev-note-text').innerText = "Fetching...";
             fetch(scriptURL).then(res => res.json()).then(data => {
                 document.getElementById('prev-note-text').innerText = data.note;
                 document.getElementById('prev-note-info').innerText = data.name + " • " + data.time;
@@ -108,7 +108,7 @@
     function viewFullHistory() {
         const pw = prompt("Enter History Password (786):");
         if(pw === "786") {
-            window.open('https://docs.google.com/spreadsheets/d/1zlUq_wwmllEdhXdTrniLmazsmKhNm2p-y29UJBwftUI/edit', '_blank');
+            window.open(sheetLink, '_blank');
         } else { alert("Access Denied!"); }
     }
 </script>
