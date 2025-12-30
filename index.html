@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Active Stable</title>
+    <title>Secret World - Active Final</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -15,7 +15,7 @@
         .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; }
         #dashboard { display: none; }
         
-        .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
+        .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; min-height: 40px; }
         .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #f2f2f2; padding-bottom: 5px; }
         .user-info { display: flex; align-items: center; }
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
@@ -65,8 +65,7 @@
 </div>
 
 <script>
-    // Updated Script URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzQ6pY-SCSdPl1MnyxxFVw-lEMzwEvHLVDACZ5IqTT5kz-YLuYZBht0MGC7yMagRWg9/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzqL7P6WcEkGa4T0E96ohbxcqLXJ4hm5e642VDjFtZb5bMJ1AAoYgc1gwlN0AMtccGH/exec';
     const sheetURL = 'https://docs.google.com/spreadsheets/d/1_dDtsqDy5l_YBtIAjZfLGIQVqeoJHNYHJJqeu0oLKH4/edit';
     let currentUser = "";
 
@@ -81,7 +80,7 @@
             document.getElementById('dashboard').style.display = 'block';
             updateStatus("Online");
             refreshData(); 
-            setInterval(refreshData, 5000); 
+            setInterval(refreshData, 8000); 
         } else { alert("Unauthorized!"); clearInputs(); }
     }
 
@@ -89,11 +88,13 @@
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: currentUser, status: status }) });
     }
 
-    function refreshData() {
-        fetch(scriptURL).then(res => res.json()).then(data => {
+    async function refreshData() {
+        try {
+            const res = await fetch(scriptURL);
+            const data = await res.json();
             let html = "";
-            data.onlineUsers.forEach(user => {
-                if(user.name && user.name !== "Name") {
+            if(data.onlineUsers && data.onlineUsers.length > 0) {
+                data.onlineUsers.forEach(user => {
                     const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
                     html += `<div class="user-row">
                                 <div class="user-info">
@@ -102,10 +103,14 @@
                                 </div>
                                 ${user.name === currentUser ? `<button class="off-btn" onclick="logout()">OFF</button>` : ''}
                              </div>`;
-                }
-            });
+                });
+            } else {
+                html = "<div style='color:#ccc; font-size:0.7rem;'>No activity yet</div>";
+            }
             document.getElementById('status-container').innerHTML = html;
-        });
+        } catch (e) {
+            console.log("Fetch error...");
+        }
     }
 
     function logout() { updateStatus("Offline"); setTimeout(() => { location.reload(); }, 500); }
@@ -132,12 +137,11 @@
                 document.getElementById('prev-note-text').innerText = data.note.note;
                 document.getElementById('prev-note-info').innerText = data.note.name + " • " + data.note.time;
             }).catch(() => { document.getElementById('prev-note-text').innerText = "No note found."; });
-        } else if(pw != null) { alert("Wrong Password!"); }
+        }
     }
 
     function lockNoteAgain() { document.getElementById('prev-note-display').style.display = 'none'; document.getElementById('lock-btn').style.display = 'block'; }
     function viewFullHistory() { if(prompt("Enter History Password (786):") === "786") { window.open(sheetURL, '_blank'); } }
-    
     window.addEventListener('beforeunload', function () { updateStatus("Offline"); });
 </script>
 </body>
