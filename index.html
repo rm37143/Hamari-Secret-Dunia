@@ -21,13 +21,11 @@
         .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
         .bell-active { filter: grayscale(0); transform: scale(1.2); }
         
-        /* Chat Button & Blink */
         .chat-btn { background: #34495e; color: white; border: none; padding: 14px; border-radius: 25px; width: 100%; font-weight: bold; cursor: pointer; margin: 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .blink-dot { height: 12px; width: 12px; background-color: var(--green); border-radius: 50%; display: none; box-shadow: 0 0 8px var(--green); }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         .is-blinking { display: inline-block; animation: blink 1s infinite; }
 
-        /* Chat Box */
         #chat-box { height: 350px; overflow-y: auto; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: left; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; }
         .msg { margin-bottom: 10px; padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; }
         .msg-me { background: #ff85a2; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
@@ -87,7 +85,9 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzJvIi67ckUenZZJXANkBaFMk_Zinsbejpf7heHdek4orTchpBgSbTST7LWwv9LZnf-/exec';
+    // UPDATED SCRIPT URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbweiwo9JSHfWMWrAP5VD1wrvRcsZw6uAMBo-pxn4sanBC4FyZ_t9gMstNY_NijrjKAX/exec';
+    
     let currentUser = "";
     let myBell = "OFF";
     let lastStatusMap = {};
@@ -143,7 +143,7 @@
 
             if(document.getElementById('chat-screen').style.display === 'block') {
                 let chatHtml = "";
-                if(data.chatMessages.length > 1) {
+                if(data.chatMessages && data.chatMessages.length > 1) {
                     data.chatMessages.forEach(m => {
                         if(m[0] && m[0] !== "Name") {
                             chatHtml += `<div class="msg ${m[0]===currentUser?'msg-me':'msg-them'}">
@@ -151,7 +151,7 @@
                             </div>`;
                         }
                     });
-                } else { chatHtml = "<div style='color:#ccc; margin-top:20px;'>No messages here...</div>"; }
+                } else { chatHtml = "<div style='color:#ccc; margin-top:20px; text-align:center;'>No messages yet.</div>"; }
                 const box = document.getElementById('chat-box');
                 box.innerHTML = chatHtml;
                 box.scrollTop = box.scrollHeight;
@@ -180,9 +180,9 @@
     }
 
     function clearChatData() {
-        if(confirm("Clear all chat history?")) {
+        if(confirm("Saari chat delete kar dein?")) {
             fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "clearChat", name: currentUser }) });
-            document.getElementById('chat-box').innerHTML = "Cleaning...";
+            alert("Chat Cleared! Refresh hone mein thora waqt lag sakta hai.");
         }
     }
 
