@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 5 Final</title>
+    <title>Secret World - Phase 5 Stable</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
-        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 15px; }
-        input { width: 85%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 25px; outline: none; text-align: center; font-size: 1rem; }
-        .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; }
+        input { width: 85%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 25px; outline: none; text-align: center; }
+        .btn-main { background: var(--pink); color: white; border: none; padding: 14px 30px; border-radius: 30px; font-weight: bold; width: 100%; cursor: pointer; }
         #dashboard, #chat-screen { display: none; }
         .status-bar { background: #fff; padding: 12px 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.8rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #f2f2f2; padding-bottom: 5px; }
@@ -20,15 +20,18 @@
         .dot-offline { background: var(--grey); }
         .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
         .bell-active { filter: grayscale(0); transform: scale(1.2); }
+        
         .chat-btn { background: #34495e; color: white; border: none; padding: 14px; border-radius: 25px; width: 100%; font-weight: bold; cursor: pointer; margin: 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .blink-dot { height: 12px; width: 12px; background-color: var(--green); border-radius: 50%; display: none; box-shadow: 0 0 8px var(--green); }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         .is-blinking { display: inline-block; animation: blink 1s infinite; }
+
         #chat-box { height: 350px; overflow-y: auto; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: left; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; }
         .msg { margin-bottom: 10px; padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; }
         .msg-me { background: #ff85a2; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
         .msg-them { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eee; }
         .msg-info { font-size: 0.65rem; opacity: 0.7; display: block; margin-top: 4px; }
+        
         textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
     </style>
@@ -39,7 +42,7 @@
     <h2 class="main-title">Hamari Secret Dunia</h2>
 
     <div id="login-screen" class="card">
-        <h1 style="color:var(--pink); margin-top:0;">Welcome</h1>
+        <h1 style="color:var(--pink)">Welcome</h1>
         <input type="text" id="u-name" placeholder="Enter Name" autocomplete="off">
         <input type="password" id="u-pass" placeholder="Enter Key" autocomplete="new-password">
         <button class="btn-main" onclick="checkAuth()">Unlock World</button>
@@ -51,8 +54,8 @@
             <span id="chat-blink" class="blink-dot"></span> Secret Chat Room 💬
         </button>
         <div class="card" style="text-align: left; border-left: 5px solid var(--pink);">
-            <textarea id="note-input" placeholder="Write a secret note..."></textarea>
-            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; float:right; cursor:pointer;">Send</button>
+            <textarea id="note-input" placeholder="Write Note..."></textarea>
+            <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; float:right;">Send</button>
             <div style="clear:both;"></div>
         </div>
         <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px solid #ccc; background:white; padding:12px; cursor:pointer; border-radius:25px; color:#888;">Show Locked Note 🔒</button>
@@ -73,14 +76,14 @@
         <div id="chat-box">Loading...</div>
         <div style="display:flex; gap:8px;">
             <input type="text" id="chat-input" style="width:70%; margin:0; border-radius:15px; text-align:left; padding-left:15px;" placeholder="Message...">
-            <button onclick="sendChat()" style="width:30%; background:var(--pink); color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">Send</button>
+            <button onclick="sendChat()" style="width:30%; background:var(--pink); color:white; border:none; border-radius:15px; font-weight:bold;">Send</button>
         </div>
     </div>
 </div>
 
 <script>
-    // LINE 116: NEW SCRIPT URL UPDATED
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxJmVZYgs1wyCXX---Cse5OMY8DW3xwjLSW288TGYTisJzT4aaqRge8C0Dndc8N-k7y/exec';
+    // YOUR NEW SCRIPT URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzjGazMunm9ZATxVwxBqx5dmJWOe3SJoDXpUyyYZSoshrz3UNRDGikbd8CmIBbCyIod/exec';
     
     let currentUser = "";
     let myBell = "OFF";
@@ -102,6 +105,7 @@
         } else { alert("Unauthorized!"); }
     }
 
+    // ENTER KEY Functionality
     document.getElementById('chat-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') { sendChat(); }
     });
@@ -143,7 +147,7 @@
                             </div>`;
                         }
                     });
-                } else { chatHtml = "<div style='color:#ccc; margin-top:20px; text-align:center;'>No messages yet.</div>"; }
+                } else { chatHtml = "<div style='color:#ccc; margin-top:20px; text-align:center;'>No messages here...</div>"; }
                 const box = document.getElementById('chat-box');
                 box.innerHTML = chatHtml;
                 box.scrollTop = box.scrollHeight;
@@ -174,14 +178,14 @@
     function clearChatData() {
         if(confirm("Saari chat delete kar dein?")) {
             fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "clearChat", name: currentUser }) });
-            alert("Chat Cleared! Kuch der mein saaf ho jayegi.");
+            alert("Chat Cleared! Refresh hone mein thora waqt lag sakta hai.");
         }
     }
 
     function sendNote() {
         const note = document.getElementById('note-input').value.trim();
         if(!note) return;
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) }).then(() => { alert("Note Sent!"); document.getElementById('note-input').value = ""; });
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) }).then(() => { alert("Sent!"); document.getElementById('note-input').value = ""; });
     }
 
     function toggleBell() {
