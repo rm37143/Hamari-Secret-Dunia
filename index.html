@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Final Fixed</title>
+    <title>Secret World - Phase 4 Bell</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -20,6 +20,8 @@
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
+        .bell-icon { cursor: pointer; margin-left: 10px; font-size: 1rem; filter: grayscale(1); transition: 0.3s; }
+        .bell-active { filter: grayscale(0); transform: scale(1.2); }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
         textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
     </style>
@@ -28,6 +30,7 @@
 
 <div class="container">
     <h2 class="main-title">Hamari Secret Dunia</h2>
+
     <div id="login-screen" class="card">
         <h1 class="welcome-title">Welcome</h1>
         <input type="text" id="u-name" placeholder="Enter Name">
@@ -37,12 +40,14 @@
 
     <div id="dashboard">
         <div class="status-bar" id="status-container">Connecting...</div>
+
         <div class="card" style="text-align: left; border-left: 5px solid var(--pink);">
             <h4 style="margin:0; font-size:0.8rem; color:var(--pink);">Write New Note:</h4>
             <textarea id="note-input" placeholder="Type Here..."></textarea>
             <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; font-size:0.8rem; cursor:pointer; float:right;">Send</button>
             <div style="clear:both;"></div>
         </div>
+
         <div class="card" style="text-align: left; background: #f9f9f9; border-left: 5px solid #bbb;">
             <h4 style="margin:0; font-size:0.75rem; color:#777;">Previous Note:</h4>
             <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px dashed #ccc; background:none; padding:10px; cursor:pointer; border-radius:15px;">Show Locked Note 🔒</button>
@@ -57,8 +62,11 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwnCYXIXsHOU_U6XATtxwftnncjlZv1gRJNMNKqWgsYMGWHJvtrizUMbO5cBI6JkQ4y/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwe_qtaFURKaKeD6FX-O7yBHFebq7Qwkiznrf9PjUZMzKe5Hi1JYGsNmsQr1zSpC_7c/exec';
     let currentUser = "";
+    let myBell = "OFF";
+    let lastStatusMap = {};
+    const bellSound = new Audio('https://www.soundjay.com/buttons/sounds/button-30.mp3');
 
     function clearInputs() { document.getElementById('u-name').value = ""; document.getElementById('u-pass').value = ""; }
 
@@ -72,6 +80,7 @@
             updateStatus("Online");
             refreshData(); 
             setInterval(refreshData, 5000); 
+            alert("Sunein: Login ke baad ek baar screen par click karein taake Bell active ho jaye!");
         } else { alert("Unauthorized!"); clearInputs(); }
     }
 
@@ -79,18 +88,34 @@
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: currentUser, status: status }) });
     }
 
+    function toggleBell() {
+        myBell = (myBell === "OFF") ? "ON" : "OFF";
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateBell", name: currentUser, bell: myBell }) });
+        refreshData();
+    }
+
     function refreshData() {
         fetch(scriptURL).then(res => res.json()).then(data => {
             let html = "";
             data.onlineUsers.forEach(user => {
-                // Filter: Khali naam ya header row ko skip karega
                 if(user.name && user.name.trim() !== "" && user.name !== "Name") {
                     const dotClass = user.status === "Online" ? "dot-online" : "dot-offline";
                     const isMe = user.name === currentUser;
+                    if(isMe) myBell = user.bell;
+
+                    // Bell Sound Logic
+                    if(!isMe && user.status === "Online" && lastStatusMap[user.name] !== "Online" && myBell === "ON") {
+                        bellSound.play().catch(() => console.log("User must interact first"));
+                    }
+                    lastStatusMap[user.name] = user.status;
+
                     html += `<div class="user-row">
                                 <div class="user-info">
                                     <span class="dot ${dotClass}"></span>
                                     <b>${user.name}</b> <small style="margin-left:5px; color:#999;">(${user.time})</small>
+                                    <span onclick="${isMe ? 'toggleBell()' : ''}" class="bell-icon ${user.bell === 'ON' ? 'bell-active' : ''}">
+                                        ${user.bell === 'ON' ? '🔔' : '🔕'}
+                                    </span>
                                 </div>
                                 ${isMe ? `<button class="off-btn" onclick="logout()">OFF</button>` : ''}
                              </div>`;
