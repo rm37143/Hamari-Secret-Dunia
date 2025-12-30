@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 5 Stable</title>
+    <title>Secret World - Phase 4 Stable</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -26,11 +26,10 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         .is-blinking { display: inline-block; animation: blink 1s infinite; }
 
-        #chat-box { height: 350px; overflow-y: auto; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: left; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .msg { margin-bottom: 10px; padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; }
+        #chat-box { height: 300px; overflow-y: auto; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: left; margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; }
+        .msg { margin-bottom: 10px; padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; }
         .msg-me { background: #ff85a2; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
         .msg-them { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eee; }
-        .msg-info { font-size: 0.65rem; opacity: 0.7; display: block; margin-top: 4px; }
         
         textarea { width: 100%; border: none; background: transparent; font-style: italic; resize: none; outline: none; min-height: 60px; font-size: 1rem; }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 12px; font-size:0.7rem; cursor:pointer; font-weight: bold; }
@@ -50,14 +49,17 @@
 
     <div id="dashboard">
         <div class="status-bar" id="status-container">Connecting...</div>
+
         <button class="chat-btn" onclick="openChat()">
             <span id="chat-blink" class="blink-dot"></span> Secret Chat Room 💬
         </button>
+
         <div class="card" style="text-align: left; border-left: 5px solid var(--pink);">
             <textarea id="note-input" placeholder="Write Note..."></textarea>
             <button onclick="sendNote()" id="send-btn" style="background:var(--pink); color:white; border:none; border-radius:15px; padding:6px 20px; float:right;">Send</button>
             <div style="clear:both;"></div>
         </div>
+
         <button id="lock-btn" onclick="showLockedNote()" style="width:100%; margin-top:10px; border:1px solid #ccc; background:white; padding:12px; cursor:pointer; border-radius:25px; color:#888;">Show Locked Note 🔒</button>
         <div id="prev-note-display" style="display:none;" class="card">
             <div id="prev-note-text" style="font-style: italic; color: #555;">Loading...</div>
@@ -66,24 +68,21 @@
     </div>
 
     <div id="chat-screen" class="card" style="padding: 15px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <b style="color:var(--pink)">Live Secret Chat</b>
-            <div>
-                <button onclick="clearChatData()" style="background:#ff4d4d; color:white; border:none; border-radius:10px; padding:5px 10px; cursor:pointer; font-size:0.7rem; font-weight:bold; margin-right:5px;">Clear All</button>
-                <button onclick="closeChat()" style="background:#eee; border:none; border-radius:10px; padding:5px 12px; cursor:pointer; font-size:0.8rem;">Exit</button>
-            </div>
+            <button onclick="closeChat()" style="background:#eee; border:none; border-radius:10px; padding:5px 12px; cursor:pointer; font-size:0.8rem;">Exit</button>
         </div>
         <div id="chat-box">Loading...</div>
         <div style="display:flex; gap:8px;">
-            <input type="text" id="chat-input" style="width:70%; margin:0; border-radius:15px; text-align:left; padding-left:15px;" placeholder="Message...">
-            <button onclick="sendChat()" style="width:30%; background:var(--pink); color:white; border:none; border-radius:15px; font-weight:bold;">Send</button>
+            <input type="text" id="chat-input" style="width:75%; margin:0; border-radius:15px; text-align:left; padding-left:15px;" placeholder="Message...">
+            <button onclick="sendChat()" style="width:25%; background:var(--pink); color:white; border:none; border-radius:15px; font-weight:bold;">Send</button>
         </div>
     </div>
 </div>
 
 <script>
-    // YOUR NEW SCRIPT URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzjGazMunm9ZATxVwxBqx5dmJWOe3SJoDXpUyyYZSoshrz3UNRDGikbd8CmIBbCyIod/exec';
+    // Updated with your NEW Stable URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-zOskhfh75OE1J5dnOid929mHkIw0kGBOacaAbny3mR6ill67-qXZu9hNF8PBwLqT/exec';
     
     let currentUser = "";
     let myBell = "OFF";
@@ -104,11 +103,6 @@
             setInterval(refreshData, 4000); 
         } else { alert("Unauthorized!"); }
     }
-
-    // ENTER KEY Functionality
-    document.getElementById('chat-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') { sendChat(); }
-    });
 
     function updateStatus(status) {
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: currentUser, status: status }) });
@@ -139,18 +133,12 @@
 
             if(document.getElementById('chat-screen').style.display === 'block') {
                 let chatHtml = "";
-                if(data.chatMessages && data.chatMessages.length > 1) {
-                    data.chatMessages.forEach(m => {
-                        if(m[0] && m[0] !== "Name") {
-                            chatHtml += `<div class="msg ${m[0]===currentUser?'msg-me':'msg-them'}">
-                                <b>${m[0]}</b><br>${m[1]}<span class="msg-info">${m[2]}</span>
-                            </div>`;
-                        }
-                    });
-                } else { chatHtml = "<div style='color:#ccc; margin-top:20px; text-align:center;'>No messages here...</div>"; }
-                const box = document.getElementById('chat-box');
-                box.innerHTML = chatHtml;
-                box.scrollTop = box.scrollHeight;
+                data.chatMessages.forEach(m => {
+                    if(m[0] && m[0] !== "Name") {
+                        chatHtml += `<div class="msg ${m[0]===currentUser?'msg-me':'msg-them'}"><b>${m[0]}</b>: ${m[1]}</div>`;
+                    }
+                });
+                document.getElementById('chat-box').innerHTML = chatHtml;
             }
         });
     }
@@ -173,13 +161,6 @@
         if(!msg) return;
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "sendChat", name: currentUser, msg: msg }) });
         input.value = "";
-    }
-
-    function clearChatData() {
-        if(confirm("Saari chat delete kar dein?")) {
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "clearChat", name: currentUser }) });
-            alert("Chat Cleared! Refresh hone mein thora waqt lag sakta hai.");
-        }
     }
 
     function sendNote() {
