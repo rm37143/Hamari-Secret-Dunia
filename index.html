@@ -3,56 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World 7★ - 6star Edition</title>
+    <title>Secret World 6★ Ultra</title>
     <style>
-        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --dark: #444; }
+        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --dark: #444; --btn-bg: #fff0f3; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
         
-        /* 6star Status Bar */
+        /* 6-star Original Status Bar */
         .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.7rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
 
-        /* Inputs & Writing (6star Style) */
-        input { width: 85%; padding: 12px; margin: 8px 0; border-radius: 25px; border: 1px solid #eee; outline: none; text-align: center; }
-        textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; font-style: normal; }
-        .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; }
+        /* Writing Section */
+        textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
+        .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
         
-        /* History Box (6star Colors) */
+        /* History (6-star Original) */
         .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; font-size: 0.9rem; background: rgba(255,255,255,0.3); border-radius: 15px; display: flex; flex-direction: column; }
         .note-item { margin-bottom: 10px; padding: 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.5); }
         .note-awais { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; }
         .note-nisha { background-color: #fce4ec !important; border-left: 5px solid #f06292; }
-        .note-meta { font-size: 0.65rem; color: #777; margin-top: 8px; display: block; text-align: right; }
-        .u-bold { font-weight: bold; color: #444; }
+        .note-meta { font-size: 0.65rem; color: #777; margin-top: 8px; display: block; text-align: right; font-weight: bold; }
 
-        /* Hub Buttons (End of Dashboard) */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .hub-btn { background: rgba(255,255,255,0.8); border: 1px solid white; padding: 15px 5px; border-radius: 18px; cursor: pointer; position: relative; font-size: 0.75rem; font-weight: bold; color: #555; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .hub-btn:active { transform: scale(0.95); }
-        .live-indicator { width: 8px; height: 8px; border-radius: 50%; background: #eee; position: absolute; top: 8px; right: 8px; }
-        .is-active { background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 1s infinite; }
+        /* Stylish Hub Buttons (End Par) */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .hub-btn { background: var(--btn-bg); border: 1px solid #ffd1dc; padding: 15px 5px; border-radius: 18px; cursor: pointer; position: relative; font-size: 0.75rem; font-weight: bold; color: #d63384; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .hub-btn:hover { background: #ffe4e8; }
+        .live-indicator { width: 9px; height: 9px; border-radius: 50%; background: #e0e0e0; position: absolute; top: 8px; right: 10px; }
+        .is-active { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.5s infinite; }
         
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; color: #777; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; color: #777; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 0.7rem; cursor: pointer; }
         #dashboard { display: none; }
-        .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; }
     </style>
 </head>
 <body onload="clearInputs()">
 
 <div class="container">
-    <h2 class="main-title">Secret World 7★</h2>
+    <h2 class="main-title">Secret World 6★</h2>
 
     <div id="login-screen" class="card">
         <h3 style="color:var(--pink); margin-top:0;">Secure Login</h3>
-        <input type="text" id="u-name" placeholder="Name (e.g. AWS)">
-        <input type="password" id="u-pass" placeholder="Password (Key)">
+        <input type="text" id="u-name" placeholder="Name">
+        <input type="password" id="u-pass" placeholder="Password">
         <button class="btn-main" onclick="checkAuth()">Login</button>
     </div>
 
@@ -60,8 +57,7 @@
         <div class="status-bar" id="status-container">Connecting...</div>
 
         <div class="card" style="border-left: 5px solid var(--pink);">
-            <h4 style="margin:0 0 5px 0; font-size:0.75rem; color:var(--pink); text-align:left;">New Note (Enter):</h4>
-            <textarea id="note-input" placeholder="Type message..." onkeypress="handleEnter(event)"></textarea>
+            <textarea id="note-input" placeholder="Write a note..." onkeypress="handleEnter(event)"></textarea>
         </div>
 
         <div class="card" id="history-card" style="border-left: 5px solid var(--dark);">
@@ -70,13 +66,12 @@
             </div>
             <div id="history-content" style="display:none;">
                 <button class="close-btn" onclick="lockHistory()">X</button>
-                <h4 style="margin:0 0 10px 0; font-size:0.75rem; color:var(--dark); text-align:left;">Recent History:</h4>
-                <div class="history-box" id="notes-display">Loading...</div>
+                <div class="history-box" id="notes-display"></div>
             </div>
         </div>
 
         <div class="card">
-            <h4 style="margin:0 0 10px 0; color:var(--dark); font-size:0.75rem; text-align:left;">Quick Access Hub:</h4>
+            <h4 style="margin:0 0 10px 0; color:var(--dark); font-size:0.75rem; text-align:left;">Access Hub:</h4>
             <div class="btn-grid" id="hub-grid"></div>
         </div>
     </div>
@@ -86,16 +81,16 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwqGAlHv1_ISYO6tdIQsvl89znk8XJ8RHd_w30Sicv0TqWtrwnUdeDlpk2vv816y6s9/exec';
     
     const hubButtons = [
-        { name: "AI Assistant", link: "", pass: "ai123" },
-        { name: "WhatsApp Hub", link: "https://wa.me/", pass: "wa123" },
-        { name: "Chat Room 1", link: "", pass: "chat1" },
-        { name: "Chat Room 2", link: "", pass: "chat2" },
-        { name: "Video Room", link: "", pass: "vid123" },
-        { name: "Pinterest", link: "https://pinterest.com", pass: "pin123" },
-        { name: "Mega Storage", link: "https://mega.nz", pass: "mega123" },
-        { name: "Coming Soon", link: "#", pass: "soon1" },
-        { name: "Coming Soon", link: "#", pass: "soon2" },
-        { name: "Coming Soon", link: "#", pass: "soon3" }
+        { name: "Ai Assistant", link: "", pass: "ai1" },
+        { name: "WhatsApp Hub", link: "https://wa.me/", pass: "wa1" },
+        { name: "Chat Room 1", link: "", pass: "c1" },
+        { name: "Chat Room 2", link: "", pass: "c2" },
+        { name: "Video Room", link: "", pass: "v1" },
+        { name: "Pinterest", link: "https://pinterest.com", pass: "p1" },
+        { name: "Mega Storage", link: "https://mega.nz", pass: "m1" },
+        { name: "Coming Soon", link: "#", pass: "" },
+        { name: "Coming Soon", link: "#", pass: "" },
+        { name: "Coming Soon", link: "#", pass: "" }
     ];
 
     let currentUser = "";
@@ -114,9 +109,9 @@
             document.getElementById('dashboard').style.display = 'block';
             createHub();
             updateStatus("Online");
+            setInterval(refreshData, 5000); 
             refreshData();
-            setInterval(refreshData, 8000); 
-        } else { alert("Invalid Credentials!"); }
+        } else { alert("Invalid!"); }
     }
 
     function createHub() {
@@ -129,11 +124,11 @@
 
     async function openLink(index) {
         const btn = hubButtons[index];
-        if(btn.link === "#") return;
+        if(btn.link === "#" || !btn.pass) return;
         if(prompt(`Password for ${btn.name}:`) === btn.pass) {
-            await updateStatus(`In ${btn.name}`);
+            updateStatus(`In ${btn.name}`);
             window.open(btn.link, '_blank');
-            setTimeout(() => updateStatus("Online"), 15000);
+            setTimeout(() => updateStatus("Online"), 20000);
         }
     }
 
@@ -141,12 +136,11 @@
         try {
             const res = await fetch(scriptURL);
             const data = await res.json();
-            
             let sHtml = "";
             let activeRoom = "";
             data.onlineUsers.forEach(u => {
                 if(u.name) {
-                    sHtml += `<div class="user-row"><span><span class="dot dot-online"></span><b>${u.name}</b>: ${u.status}</span>${u.name === currentUser ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</div>`;
+                    sHtml += `<div class="user-row"><span><span class="dot dot-online"></span><b>${u.name}</b>: ${u.status}</span><span style="color:#aaa; font-size:0.6rem;">${u.time}</span></div>`;
                     if(u.status.includes("In ")) activeRoom = u.status.replace("In ", "");
                 }
             });
@@ -161,31 +155,28 @@
             if(isHistoryUnlocked) {
                 let hHtml = "";
                 data.history.forEach(h => {
-                    let c = h.name.includes("AWS") || h.name.includes("AWAIS") ? "note-awais" : "note-nisha";
-                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><div class="note-meta"><span class="u-bold">${h.name}</span> • ${h.time}</div></div>`;
+                    let c = (h.name.includes("AWS") || h.name.includes("AWAIS")) ? "note-awais" : "note-nisha";
+                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><div class="note-meta">${h.name} • ${h.time}</div></div>`;
                 });
-                const d = document.getElementById('notes-display');
-                d.innerHTML = hHtml || "No notes.";
-                d.scrollTop = 0;
+                document.getElementById('notes-display').innerHTML = hHtml;
             }
         } catch (e) {}
     }
 
-    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendNote(); } }
+    function handleEnter(e) { if (e.key === 'Enter') sendNote(); }
     async function sendNote() {
         const input = document.getElementById('note-input');
         const note = input.value.trim();
         if(!note) return;
         input.value = "Saving...";
-        try {
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) });
-            input.value = ""; input.focus(); refreshData();
-        } catch (e) { input.value = ""; }
+        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) });
+        input.value = ""; refreshData();
     }
 
     function updateStatus(s) { fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, status:s})}); }
     function unlockHistory() { if(prompt("Pass:")==="123") { isHistoryUnlocked=true; document.getElementById('history-lock').style.display='none'; document.getElementById('history-content').style.display='block'; refreshData(); } }
     function lockHistory() { isHistoryUnlocked=false; document.getElementById('history-lock').style.display='block'; document.getElementById('history-content').style.display='none'; }
+    window.addEventListener('beforeunload', () => updateStatus("Offline"));
 </script>
 </body>
 </html>
