@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - Phase 2 Final</title>
+    <title>Secret World - Step 2 Success</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -59,8 +59,8 @@
 
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbweQHf0eqCPdpWzEIUBL4Sffz7MD-PV-IbhI7XcpiC6betc364fHUMbzfoPl4E34Hh-Eg/exec';
-    // Sahi Sheet Link yahan hai
-    const sheetLink = 'https://docs.google.com/spreadsheets/d/1zlUq_wwmllEdhXdTrniLmazsmKhNm2p-y29UJBwftUI/edit';
+    // Aapka bheja hua sahi link yahan set kar diya hai
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/1zUqJwwmllEdhXdTmLmzssmBXcX5Hnktm-qzY29UJBwftU/edit';
 
     function clearInputs() { document.getElementById('u-name').value = ""; document.getElementById('u-pass').value = ""; }
 
@@ -108,10 +108,9 @@
     function viewFullHistory() {
         const pw = prompt("Enter History Password (786):");
         if(pw === "786") {
-            window.open(sheetLink, '_blank');
+            window.open(sheetURL, '_blank');
         } else { alert("Access Denied!"); }
     }
 </script>
-
 </body>
 </html>
