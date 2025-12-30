@@ -3,35 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret World - 3star Prime</title>
+    <title>Secret World 4★ Prime</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
-        
-        /* Status Bar */
         .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.7rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
-
-        /* Inputs */
         input { width: 85%; padding: 12px; margin: 8px 0; border-radius: 25px; border: 1px solid #eee; outline: none; text-align: center; }
         textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; min-height: 50px; font-style: normal; color: #333; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.96); }
-        
-        /* History Box */
         .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; font-size: 0.9rem; background: rgba(255,255,255,0.5); border-radius: 15px; scroll-behavior: smooth; }
         .note-item { margin-bottom: 15px; padding: 8px; border-radius: 12px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .note-text { color: #333; line-height: 1.4; word-wrap: break-word; font-style: normal; }
         .note-meta { font-size: 0.6rem; color: #bbb; margin-top: 5px; display: block; text-align: right; }
-        
         .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; color: #777; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
-        
         #dashboard { display: none; }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; }
     </style>
@@ -39,12 +29,12 @@
 <body onload="clearInputs()">
 
 <div class="container">
-    <h2 class="main-title">Secret World Prime ★</h2>
+    <h2 class="main-title">Secret World 4★</h2>
 
     <div id="login-screen" class="card">
         <h3 style="color:var(--pink); margin-top:0;">Secure Login</h3>
         <input type="text" id="u-name" placeholder="Name (e.g. AWS or NI)">
-        <input type="password" id="u-pass" placeholder="Password">
+        <input type="password" id="u-pass" placeholder="Password (Key)">
         <button class="btn-main" onclick="checkAuth()">Login</button>
     </div>
 
@@ -52,8 +42,8 @@
         <div class="status-bar" id="status-container">Connecting...</div>
 
         <div class="card" style="border-left: 5px solid var(--pink);">
-            <h4 style="margin:0 0 5px 0; font-size:0.75rem; color:var(--pink); text-align:left;">New Note (Enter to Save):</h4>
-            <textarea id="note-input" placeholder="Type your message..." onkeypress="handleEnter(event)"></textarea>
+            <h4 style="margin:0 0 5px 0; font-size:0.75rem; color:var(--pink); text-align:left;">Write Note (Enter):</h4>
+            <textarea id="note-input" placeholder="Type message..." onkeypress="handleEnter(event)"></textarea>
         </div>
 
         <div class="card" id="history-card" style="border-left: 5px solid var(--dark);">
@@ -70,8 +60,9 @@
 </div>
 
 <script>
-    const scriptURL = 'Https://script.google.com/macros/s/AKfycbzRbxdJlYNbUhE8Dog59cflLZtL7a0QRKPJBOUDUdyEc5iYDaGtoYN0gzAbaLNZXGUu/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwqGAlHv1_ISYO6tdIQsvl89znk8XJ8RHd_w30Sicv0TqWtrwnUdeDlpk2vv816y6s9/exec';
     let currentUser = "";
+    let currentPass = "";
     let isHistoryUnlocked = false;
 
     function clearInputs() { 
@@ -82,23 +73,19 @@
     function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
         const p = document.getElementById('u-pass').value.trim();
-        // Ab koi bhi naam chalega, bas password n37143 hona chahiye
-        if(n !== "" && p === 'n37143') {
+        // Password logic: 37143 for you, n37143 for Nisha
+        if(n !== "" && (p === 'n37143' || p === '37143')) {
             currentUser = n;
+            currentPass = p;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             updateStatus("Online");
             refreshData(); 
             setInterval(refreshData, 8000); 
-        } else { alert("Invalid Name or Password!"); }
+        } else { alert("Invalid Credentials!"); }
     }
 
-    function handleEnter(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendNote();
-        }
-    }
+    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendNote(); } }
 
     async function sendNote() {
         const input = document.getElementById('note-input');
@@ -108,9 +95,9 @@
         input.disabled = true;
         try {
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) });
-            input.value = "";
-            input.disabled = false;
-            input.focus();
+            input.value = ""; 
+            input.disabled = false; 
+            input.focus(); 
             refreshData();
         } catch (e) { input.disabled = false; }
     }
@@ -124,21 +111,19 @@
         }
     }
 
-    function lockHistory() {
-        isHistoryUnlocked = false;
-        document.getElementById('history-lock').style.display = 'block';
-        document.getElementById('history-content').style.display = 'none';
+    function lockHistory() { 
+        isHistoryUnlocked = false; 
+        document.getElementById('history-lock').style.display = 'block'; 
+        document.getElementById('history-content').style.display = 'none'; 
     }
 
     async function refreshData() {
         try {
             const res = await fetch(scriptURL);
             const data = await res.json();
-            
-            // Render Status - Only users with a name
             let sHtml = "";
             data.onlineUsers.forEach(u => {
-                if(u.name && u.name.trim() !== "") {
+                if(u.name) {
                     sHtml += `<div class="user-row">
                         <span><span class="dot ${u.status === 'Online' ? 'dot-online' : 'dot-offline'}"></span><b>${u.name}</b></span>
                         <span style="color:#aaa;">${u.time}</span>
@@ -150,22 +135,25 @@
 
             if(isHistoryUnlocked) {
                 let hHtml = "";
-                // Reverse history to show natural flow
                 data.history.reverse().forEach(h => {
                     hHtml += `<div class="note-item">
-                        <div class="note-text">${h.note}</div>
+                        <div style="color:#333;">${h.note}</div>
                         <div class="note-meta">${h.name} • ${h.time}</div>
                     </div>`;
                 });
-                const display = document.getElementById('notes-display');
-                display.innerHTML = hHtml || "No notes yet.";
-                display.scrollTop = display.scrollHeight; 
+                const d = document.getElementById('notes-display'); 
+                d.innerHTML = hHtml || "No notes yet."; 
+                d.scrollTop = d.scrollHeight; 
             }
-        } catch (e) {}
+        } catch (e) { console.log("Refresh error"); }
     }
 
     function updateStatus(s) { 
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: currentUser, status: s }) }); 
+        fetch(scriptURL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify({ action: "updateStatus", name: currentUser, pass: currentPass, status: s }) 
+        }); 
     }
     window.addEventListener('beforeunload', () => updateStatus("Offline"));
 </script>
