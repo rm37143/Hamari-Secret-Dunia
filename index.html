@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia 6star9p</title>
+    <title>Secret Dunia DC1</title>
     <style>
-        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; --btn-bg: #fff0f3; }
+        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
-        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; }
         .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.65rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
-        .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; font-weight:bold; }
-        textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
+        textarea { width: 90%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
-        .msg-counter { font-size: 0.75rem; font-weight: bold; color: var(--pink); margin-bottom: 8px; display: block; background: #fff; padding: 6px; border-radius: 12px; }
-        /* NEW MESSAGES ON TOP Logic */
+        .msg-counter { font-size: 0.75rem; font-weight: bold; color: var(--pink); margin-bottom: 8px; display: block; }
         .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; display: flex; flex-direction: column; }
         .note-item { margin-bottom: 10px; padding: 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); }
-        .note-awais { background-color: #ffe0e9 !important; border-left: 5px solid var(--pink); } /* Pink for Awais */
-        .note-nisha { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; } /* Light Blue for Nisha */
+        .note-awais { background-color: #ffe0e9 !important; border-left: 5px solid var(--pink); } 
+        .note-nisha { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; }
         .note-meta { font-size: 0.6rem; color: #777; margin-top: 5px; display: block; text-align: right; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .hub-btn { background: var(--btn-bg); border: 1px solid #ffd1dc; padding: 12px 5px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; font-weight: bold; color: #d63384; }
+        .hub-btn { background: #fff0f3; border: 1px solid #ffd1dc; padding: 12px 5px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; font-weight: bold; color: #d63384; position: relative; }
+        .btn-dot { height: 6px; width: 6px; background: transparent; border-radius: 50%; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
+        .btn-dot-active { background: var(--green); box-shadow: 0 0 4px var(--green); }
         input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #eee; text-align: center; outline: none; }
+        .private-wrap { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 15px; color: #888; font-size: 0.8rem; }
         #dashboard { display: none; }
     </style>
 </head>
@@ -36,79 +38,84 @@
 <div class="container">
     <h2 class="main-title">Secret Dunia</h2>
     <div id="login-screen" class="card">
+        <h3 style="color:#555; margin-bottom:15px;">Welcome</h3>
         <input type="text" id="u-name" placeholder="User Name">
         <input type="password" id="u-pass" placeholder="Enter Key">
-        <div style="font-size: 0.75rem; color: #888; margin-bottom: 10px;">
-            <input type="checkbox" id="is-private"> Private Mode
+        <div class="private-wrap">
+            <input type="checkbox" id="is-private" style="width:15px;"> <span>Private Mode</span>
         </div>
         <button class="btn-main" onclick="checkAuth()">Enter World</button>
     </div>
 
     <div id="dashboard">
-        <div class="status-bar" id="status-container">Syncing Data...</div>
+        <div class="status-bar" id="status-container">Connecting...</div>
         <div class="card"><textarea id="note-input" placeholder="Write a Message..." onkeypress="if(event.key==='Enter') sendNote()"></textarea></div>
         <div class="card">
-            <div id="unread-badge" class="msg-counter">Checking...</div>
+            <div id="unread-badge" class="msg-counter">Checking messages...</div>
             <button id="unlock-btn" class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock Messages 🔒</button>
             <div id="history-area" style="display:none;"><div class="history-box" id="notes-display"></div></div>
         </div>
-        <div class="card"><div class="btn-grid" id="hub-grid"></div></div>
+        <div class="card">
+            <div style="font-size:0.7rem; color:#888; margin-bottom:10px; font-weight:bold;">Buttons Box</div>
+            <div class="btn-grid" id="hub-grid"></div>
+        </div>
     </div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx1yIkEViEpff-oTxImYOPJdc0_VB1hVo7v3ZznN1sbPFJ4ub-MO1zuOvAGKgZqpPEc/exec';
-    const msgLimit = 50; 
-    let currentUser = "", isPrivate = false, isUnlocked = false;
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxT0_6MmzcF5wSA_myWw5YEHgcYSfeCnx6sP5PuBLACBvyze6vZPyubXO7gJ9-GTm3o/exec';
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, activeRoom = "";
+    const buttons = ["Ai Assistant", "WhatsApp Hub", "Chat Room 1", "Chat Room 2", "Video Room", "Pinterest", "Mega Storage", "Coming Soon"];
 
     function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
         const p = document.getElementById('u-pass').value.trim();
-        isPrivate = document.getElementById('is-private').checked;
+        isPrivateMode = document.getElementById('is-private').checked;
         if(n && (p==='37143' || p==='n37143')) {
             currentUser = n;
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
-            createHub();
-            if(!isPrivate) updateStatus("Online");
+            if(!isPrivateMode) updateStatus("Online");
             setInterval(refreshData, 5000); refreshData();
-        } else { alert("Key Wrong!"); }
+        } else { alert("Login Error!"); }
     }
 
-    // Offline on tab close
-    window.addEventListener('beforeunload', function() { if(!isPrivate) updateStatus("Offline"); });
-
-    function createHub() {
-        const items = ["Ai Assistant", "WhatsApp Hub", "Chat Room 1", "Chat Room 2", "Video Room", "Pinterest", "Mega Storage", "Coming Soon"];
-        const grid = document.getElementById('hub-grid');
-        items.forEach(item => grid.innerHTML += `<div class="hub-btn">${item}</div>`);
-    }
+    window.onbeforeunload = function() { 
+        if(!isPrivateMode) updateStatus("Offline"); 
+        if(activeRoom) toggleButtonActivity(activeRoom, "off");
+    };
 
     async function refreshData() {
         try {
             const res = await fetch(scriptURL);
             const data = await res.json();
+            
+            // 1. Status Display
             let sHtml = "";
             let otherSeen = 0, otherName = "";
-
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
-                
-                // Status Logic
-                let displayStatus = u.status;
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
-                
-                // If user is Private, show them as Offline to others
-                if(!isMe && u.status === "Offline") { dotClass = "dot-offline"; }
+                let statusText = u.status;
+                if(isMe && isPrivateMode) { dotClass = "dot-offline"; statusText = "Private Mode"; }
 
                 sHtml += `<div class="user-row">
-                    <span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span>
-                    <span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span>
+                    <span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span>
+                    <span><small>${(isMe && isPrivateMode) ? '' : u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span>
                 </div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
+            // 2. Buttons Grid
+            let bHtml = "";
+            buttons.forEach(btn => {
+                let lightClass = data.activeButtons[btn] === "on" ? "btn-dot-active" : "";
+                bHtml += `<div class="hub-btn" onclick="enterRoom('${btn}')">${btn}<span class="btn-dot ${lightClass}"></span></div>`;
+            });
+            document.getElementById('hub-grid').innerHTML = bHtml;
+
+            // 3. Message Logic
             let history = data.history || [];
             let badge = document.getElementById('unread-badge');
             if(history.length > 0) {
@@ -117,22 +124,35 @@
                     badge.innerHTML = (otherSeen >= history.length) ? `✅ ${otherName} Seen` : `⏳ Sent (Pending...)`;
                 } else {
                     let me = data.onlineUsers.find(u => u.name.toUpperCase().includes(currentUser));
-                    let isNew = history.length > (me ? me.seenCount : 0);
-                    badge.innerHTML = isNew ? `💌 New Message For You` : `✅ All Read`;
+                    badge.innerHTML = history.length > (me ? me.seenCount : 0) ? `💌 New Message For You` : `✅ All Read`;
                 }
             }
 
             if(isUnlocked) {
                 let hHtml = "";
-                // Show only limited messages and reverse for Newest on Top
-                let displayList = history.slice(-msgLimit).reverse();
-                displayList.forEach(h => {
+                history.slice().reverse().forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
                     hHtml += `<div class="note-item ${c}"><div>${h.note}</div><small class="note-meta">${h.name} • ${h.time}</small></div>`;
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
         } catch(e) {}
+    }
+
+    async function enterRoom(room) {
+        if(activeRoom) await toggleButtonActivity(activeRoom, "off");
+        activeRoom = room;
+        await toggleButtonActivity(room, "on");
+        alert("Welcome to " + room);
+        // Yahan aap dashboard pe wapis aane pe light off karne ke liye button activity toggle kar sakte hain.
+    }
+
+    async function toggleButtonActivity(btn, state) {
+        await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:btn, state:state})});
+    }
+
+    function updateStatus(s, count) {
+        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
     }
 
     async function sendNote() {
@@ -144,7 +164,7 @@
     }
 
     async function unlockHistory() {
-        if(isPrivate) { alert("Private Mode mein lock nahi khul sakta!"); return; }
+        if(isPrivateMode) { alert("Private mode mein lock nahi khul sakta!"); return; }
         if(prompt("Pass:")==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
@@ -153,13 +173,6 @@
             updateStatus(null, data.history.length);
             refreshData();
         }
-    }
-
-    function updateStatus(s, count) {
-        let body = {action:"updateStatus", name:currentUser};
-        if(s) body.status = s;
-        if(count !== undefined) body.seenCount = count;
-        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify(body)});
     }
 </script>
 </body>
