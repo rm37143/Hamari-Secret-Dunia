@@ -61,12 +61,12 @@
         <div class="status-bar" id="status-container">Connecting...</div>
 
         <div class="card" style="border-left: 5px solid var(--pink);">
-            <textarea id="note-input" placeholder="Write a note..." onkeypress="handleEnter(event)"></textarea>
+            <textarea id="note-input" placeholder="Write a Message..." onkeypress="handleEnter(event)"></textarea>
         </div>
 
         <div class="card" id="history-card" style="border-left: 5px solid var(--dark);">
             <div id="history-lock">
-                <button class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock History 🔒</button>
+                <button class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock Message 🔒</button>
             </div>
             <div id="history-content" style="display:none;">
                 <button class="close-btn" onclick="lockHistory()">Close</button>
