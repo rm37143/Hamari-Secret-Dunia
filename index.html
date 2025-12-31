@@ -142,19 +142,26 @@
                 if(u.name) {
                     let isMe = u.name.toUpperCase().includes(currentUser);
                     let isUserPrivate = u.status === "Private";
-                    
                     let displayStatus = u.status;
+                    let displayTime = u.time;
                     let dotClass = "dot-online";
                     
-                    // NAYA LOGIC: Status gayab nahi hoga
+                    // Logic: Time freeze for Private mode
+                    if(!isUserPrivate) {
+                        // Save last known non-private time for each user
+                        localStorage.setItem('lastTime_' + u.name, u.time);
+                    }
+
                     if(isUserPrivate) {
                         if(isMe) {
                             displayStatus = "Private";
                             dotClass = "dot-private";
+                            displayTime = u.time; // Own screen shows actual time
                         } else {
-                            // Doosre user ko hamesha Offline hi nazar aayega
                             displayStatus = "Offline";
                             dotClass = "dot-offline";
+                            // Show stored time instead of current sheet time
+                            displayTime = localStorage.getItem('lastTime_' + u.name) || u.time;
                         }
                     } else if (u.status === "Offline") {
                         dotClass = "dot-offline";
@@ -163,7 +170,7 @@
                     sHtml += `<div class="user-row">
                         <span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span>
                         <span>
-                            <span style="color:#aaa; font-size:0.6rem; margin-right:5px;">${u.time}</span>
+                            <span style="color:#aaa; font-size:0.6rem; margin-right:5px;">${displayTime}</span>
                             ${isMe ? `<button class="off-btn" onclick="manualOffline()">OFF</button>` : ''}
                         </span>
                     </div>`;
