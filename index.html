@@ -75,7 +75,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbznkxMVNroTC0x7aunSogKqE5Lrxs0JFVAWe4_5iATg1woA1CNICo9REHbOWwLLTXxy/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw4Pkt7WjjZPST3rquZTPQwYnvVdfVmx8SrPeHH3nvddrFwebi9j1JDFhG9hXcuunPt/exec';
     const hubButtons = [
         { name: "Ai Assistant", link: "", pass: "ai1" },
         { name: "WhatsApp Hub", link: "https://wa.me/", pass: "wa1" },
@@ -94,6 +94,7 @@
     function clearInputs() { 
         document.getElementById('u-name').value = ""; 
         document.getElementById('u-pass').value = ""; 
+        document.getElementById('is-private').checked = false;
     }
 
     function checkAuth() {
@@ -198,7 +199,8 @@
         input.value = ""; refreshData();
     }
     function updateStatus(s) { fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s})}); }
-    function manualOffline() { updateStatus("Offline"); setTimeout(()=>location.reload(), 500); }
+    function manualOffline() { if(!myPrivateMode) updateStatus("Offline"); setTimeout(()=>location.reload(), 500); }
 </script>
 </body>
 </html>
+
