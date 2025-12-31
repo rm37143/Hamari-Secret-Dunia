@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia</title>
+    <title>Secret Dunia 6star6p</title>
     <style>
-        /* All styles from 6star3p remain exactly the same */
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #3498db; --dark: #444; --btn-bg: #fff0f3; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
@@ -24,6 +23,10 @@
         textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
         input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #eee; outline: none; text-align: center; background: rgba(255,255,255,0.8); }
+        
+        /* Message Badge Styling */
+        .msg-counter { font-size: 0.75rem; font-weight: bold; color: var(--pink); margin-bottom: 8px; display: block; background: #fff; padding: 5px; border-radius: 10px; border: 1px dashed var(--pink); }
+        
         .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; font-size: 0.9rem; background: rgba(255,255,255,0.3); border-radius: 15px; display: flex; flex-direction: column; }
         .note-item { margin-bottom: 10px; padding: 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.5); }
         .note-awais { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; }
@@ -33,7 +36,6 @@
         .hub-btn { background: var(--btn-bg); border: 1px solid #ffd1dc; padding: 15px 5px; border-radius: 18px; cursor: pointer; position: relative; font-size: 0.75rem; font-weight: bold; color: #d63384; transition: 0.3s; }
         .live-indicator { width: 9px; height: 9px; border-radius: 50%; background: #e0e0e0; position: absolute; top: 8px; right: 10px; }
         .is-active { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.9); } 50% { transform: scale(1.2); } 100% { transform: scale(0.9); } }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; color: #777; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 0.7rem; cursor: pointer; }
         #dashboard { display: none; }
     </style>
@@ -57,8 +59,10 @@
         <div class="card" style="border-left: 5px solid var(--pink);">
             <textarea id="note-input" placeholder="Write a Message..." onkeypress="handleEnter(event)"></textarea>
         </div>
+        
         <div class="card" id="history-card" style="border-left: 5px solid var(--dark);">
             <div id="history-lock">
+                <div id="unread-badge" class="msg-counter">Checking messages...</div>
                 <button class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock Messages 🔒</button>
             </div>
             <div id="history-content" style="display:none;">
@@ -66,6 +70,7 @@
                 <div class="history-box" id="notes-display"></div>
             </div>
         </div>
+
         <div class="card">
             <h4 style="margin:0 0 10px 0; color:var(--dark); font-size:0.75rem; text-align:left;">Buttons Box</h4>
             <div class="btn-grid" id="hub-grid"></div>
@@ -89,6 +94,7 @@
     ];
 
     let currentUser = "", currentID = "", myPrivateMode = false, isHistoryUnlocked = false;
+    let lastSeenCount = 0; // Kitne messages read kar liye hain
 
     function clearInputs() { 
         document.getElementById('u-name').value = ""; 
@@ -104,6 +110,10 @@
             currentUser = n; currentID = (p === '37143') ? "USER1" : "USER2";
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
+            
+            // Load pichla count agar browser memory mein hai
+            lastSeenCount = localStorage.getItem('lastReadCount_' + currentUser) || 0;
+            
             createHub();
             if(!myPrivateMode) updateStatus("Online");
             setInterval(refreshData, 5000); refreshData();
@@ -130,37 +140,50 @@
         try {
             const res = await fetch(scriptURL); const data = await res.json();
             let sHtml = "", activeRoom = "";
+            
+            // Online Status Bar Logic
             data.onlineUsers.forEach(u => {
                 if(u.name) {
                     let isMe = u.name.toUpperCase().includes(currentUser);
                     let displayStatus = u.status;
                     let displayTime = u.time;
                     let dotClass = (u.status === "Online" || u.status.includes("In ")) ? "dot-online" : "dot-offline";
-
-                    if(isMe && myPrivateMode) {
-                        displayStatus = "Private";
-                        dotClass = "dot-private";
-                    }
-
-                    sHtml += `<div class="user-row">
-                        <span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span>
-                        <span>
-                            <span style="color:#aaa; font-size:0.6rem; margin-right:5px;">${displayTime}</span>
-                            ${isMe ? `<button class="off-btn" onclick="manualOffline()">OFF</button>` : ''}
-                        </span>
-                    </div>`;
+                    if(isMe && myPrivateMode) { displayStatus = "Private"; dotClass = "dot-private"; }
+                    sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span><span><span style="color:#aaa; font-size:0.6rem; margin-right:5px;">${displayTime}</span>${isMe ? `<button class="off-btn" onclick="manualOffline()">OFF</button>` : ''}</span></div>`;
                     if(u.status.includes("In ")) activeRoom = u.status.replace("In ", "");
                 }
             });
             document.getElementById('status-container').innerHTML = sHtml;
+            
+            // Message Counter Logic
+            let history = data.history || [];
+            let totalMsgs = history.length;
+            let unread = totalMsgs - lastSeenCount;
+            let badge = document.getElementById('unread-badge');
+
+            if (unread > 0) {
+                // Check karne ke liye ke last message kisne bheja
+                let lastMsgSender = history[history.length - 1].name;
+                badge.innerHTML = `💌 ${lastMsgSender}: ${unread} New Message${unread > 1 ? 's' : ''}`;
+                badge.style.color = "#ff4d4d";
+                badge.style.borderColor = "#ff4d4d";
+            } else {
+                badge.innerHTML = `✅ All messages read (0 New)`;
+                badge.style.color = "#888";
+                badge.style.borderColor = "#eee";
+            }
+
+            // Hub Indicators
             hubButtons.forEach((btn, index) => {
                 const ind = document.getElementById(`ind-${index}`);
                 if(btn.name === activeRoom) ind.classList.add('is-active');
                 else ind.classList.remove('is-active');
             });
+
+            // History Content (if unlocked)
             if(isHistoryUnlocked) {
                 let hHtml = "";
-                data.history.forEach(h => {
+                history.forEach(h => {
                     let c = (h.name.includes("AWS") || h.name.includes("AWAIS")) ? "note-awais" : "note-nisha";
                     hHtml += `<div class="note-item ${c}"><div>${h.note}</div><div class="note-meta">${h.name} • ${h.time}</div></div>`;
                 });
@@ -169,19 +192,30 @@
         } catch (e) {}
     }
 
-    function manualOffline() { 
-        if(!myPrivateMode) updateStatus("Offline"); 
-        setTimeout(() => { location.reload(); }, 500); 
+    function unlockHistory() { 
+        if(prompt("Pass:")==="123") { 
+            isHistoryUnlocked = true; 
+            document.getElementById('history-lock').style.display = 'none'; 
+            document.getElementById('history-content').style.display = 'block'; 
+            
+            // Jab unlock kiya, matlab sab read kar liye
+            fetch(scriptURL).then(res => res.json()).then(data => {
+                lastSeenCount = data.history.length;
+                localStorage.setItem('lastReadCount_' + currentUser, lastSeenCount);
+                refreshData();
+            });
+        } 
     }
 
-    // BROSWER CLOSE LOGIC (COVERS BOTH STATUS AND BUTTONS)
-    window.addEventListener('beforeunload', function () {
-        if (!myPrivateMode && currentUser !== "") {
-            const data = JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, status:"Offline"});
-            navigator.sendBeacon(scriptURL, data);
-        }
-    });
+    function lockHistory() { 
+        isHistoryUnlocked = false; 
+        document.getElementById('history-lock').style.display = 'block'; 
+        document.getElementById('history-content').style.display = 'none'; 
+        refreshData();
+    }
 
+    function manualOffline() { if(!myPrivateMode) updateStatus("Offline"); setTimeout(() => { location.reload(); }, 500); }
+    window.addEventListener('beforeunload', function () { if (!myPrivateMode && currentUser !== "") { const data = JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, status:"Offline"}); navigator.sendBeacon(scriptURL, data); } });
     function handleEnter(e) { if (e.key === 'Enter') sendNote(); }
     async function sendNote() {
         const input = document.getElementById('note-input'); const note = input.value.trim();
@@ -189,11 +223,7 @@
         await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) });
         input.value = ""; refreshData();
     }
-    function updateStatus(s) { 
-        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, status:s})}); 
-    }
-    function unlockHistory() { if(prompt("Pass:")==="123") { isHistoryUnlocked=true; document.getElementById('history-lock').style.display='none'; document.getElementById('history-content').style.display='block'; refreshData(); } }
-    function lockHistory() { isHistoryUnlocked=false; document.getElementById('history-lock').style.display='block'; document.getElementById('history-content').style.display='none'; }
+    function updateStatus(s) { fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, status:s})}); }
 </script>
 </body>
 </html>
