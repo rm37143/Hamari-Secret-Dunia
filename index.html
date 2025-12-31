@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia 6star8p</title>
+    <title>Secret Dunia 6star9p</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; --btn-bg: #fff0f3; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -18,16 +18,16 @@
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; font-weight:bold; }
         textarea { width: 95%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
         .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
-        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #eee; text-align: center; }
         .msg-counter { font-size: 0.75rem; font-weight: bold; color: var(--pink); margin-bottom: 8px; display: block; background: #fff; padding: 6px; border-radius: 12px; }
-        .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; display: flex; flex-direction: column-reverse; } /* NEW MESSAGES ON TOP */
+        /* NEW MESSAGES ON TOP Logic */
+        .history-box { height: 350px; overflow-y: auto; text-align: left; padding: 10px; display: flex; flex-direction: column; }
         .note-item { margin-bottom: 10px; padding: 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); }
-        .note-awais { background-color: #ffe0e9 !important; border-left: 5px solid var(--pink); } /* PINK FOR AWAIS */
-        .note-nisha { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; } /* BLUE FOR NISHA */
+        .note-awais { background-color: #ffe0e9 !important; border-left: 5px solid var(--pink); } /* Pink for Awais */
+        .note-nisha { background-color: #e3f2fd !important; border-left: 5px solid #2196f3; } /* Light Blue for Nisha */
         .note-meta { font-size: 0.6rem; color: #777; margin-top: 5px; display: block; text-align: right; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .hub-btn { background: var(--btn-bg); border: 1px solid #ffd1dc; padding: 12px 5px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; font-weight: bold; color: #d63384; }
-        .private-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 0.75rem; color: #888; }
+        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #eee; text-align: center; outline: none; }
         #dashboard { display: none; }
     </style>
 </head>
@@ -38,12 +38,14 @@
     <div id="login-screen" class="card">
         <input type="text" id="u-name" placeholder="User Name">
         <input type="password" id="u-pass" placeholder="Enter Key">
-        <div class="private-wrap"><input type="checkbox" id="is-private"> Private Mode</div>
+        <div style="font-size: 0.75rem; color: #888; margin-bottom: 10px;">
+            <input type="checkbox" id="is-private"> Private Mode
+        </div>
         <button class="btn-main" onclick="checkAuth()">Enter World</button>
     </div>
 
     <div id="dashboard">
-        <div class="status-bar" id="status-container">Syncing...</div>
+        <div class="status-bar" id="status-container">Syncing Data...</div>
         <div class="card"><textarea id="note-input" placeholder="Write a Message..." onkeypress="if(event.key==='Enter') sendNote()"></textarea></div>
         <div class="card">
             <div id="unread-badge" class="msg-counter">Checking...</div>
@@ -55,7 +57,8 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbys0wExHSjxNXFd29XVQKaSemQxoC2P5imn_1pDxl-jjd5T7u-roFZ_KebFALItfQ2x/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx1yIkEViEpff-oTxImYOPJdc0_VB1hVo7v3ZznN1sbPFJ4ub-MO1zuOvAGKgZqpPEc/exec';
+    const msgLimit = 50; 
     let currentUser = "", isPrivate = false, isUnlocked = false;
 
     function checkAuth() {
@@ -69,10 +72,10 @@
             createHub();
             if(!isPrivate) updateStatus("Online");
             setInterval(refreshData, 5000); refreshData();
-        } else { alert("Error!"); }
+        } else { alert("Key Wrong!"); }
     }
 
-    // TAB CLOSE PE OFFLINE HONA
+    // Offline on tab close
     window.addEventListener('beforeunload', function() { if(!isPrivate) updateStatus("Offline"); });
 
     function createHub() {
@@ -92,11 +95,11 @@
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 
-                // Private mode logic for status display
+                // Status Logic
                 let displayStatus = u.status;
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 
-                // Agar dusra banda private hai to usey offline dikhao
+                // If user is Private, show them as Offline to others
                 if(!isMe && u.status === "Offline") { dotClass = "dot-offline"; }
 
                 sHtml += `<div class="user-row">
@@ -116,13 +119,14 @@
                     let me = data.onlineUsers.find(u => u.name.toUpperCase().includes(currentUser));
                     let isNew = history.length > (me ? me.seenCount : 0);
                     badge.innerHTML = isNew ? `💌 New Message For You` : `✅ All Read`;
-                    badge.style.color = isNew ? "#ff4d4d" : "#888";
                 }
             }
 
             if(isUnlocked) {
                 let hHtml = "";
-                history.forEach(h => {
+                // Show only limited messages and reverse for Newest on Top
+                let displayList = history.slice(-msgLimit).reverse();
+                displayList.forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
                     hHtml += `<div class="note-item ${c}"><div>${h.note}</div><small class="note-meta">${h.name} • ${h.time}</small></div>`;
                 });
@@ -140,7 +144,7 @@
     }
 
     async function unlockHistory() {
-        if(isPrivate) { alert("Cannot unlock in Private Mode"); return; }
+        if(isPrivate) { alert("Private Mode mein lock nahi khul sakta!"); return; }
         if(prompt("Pass:")==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
