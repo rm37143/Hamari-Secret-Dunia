@@ -10,7 +10,7 @@
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
-        .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.7rem; border-left: 6px solid var(--green); text-align: left; }
+        .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.7rem; border-left: 6px solid var(--green); text-align: left; min-height: 20px; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
@@ -34,6 +34,7 @@
         .private-wrap input { width: 14px !important; height: 14px !important; margin: 0 !important; cursor: pointer; accent-color: var(--blue); }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; color: #777; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
         #dashboard { display: none; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body onload="clearInputs()">
@@ -75,7 +76,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw4Pkt7WjjZPST3rquZTPQwYnvVdfVmx8SrPeHH3nvddrFwebi9j1JDFhG9hXcuunPt/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbys0wExHSjxNXFd29XVQKaSemQxoC2P5imn_1pDxl-jjd5T7u-roFZ_KebFALItfQ2x/exec';
     const hubButtons = [
         { name: "Ai Assistant", link: "", pass: "ai1" },
         { name: "WhatsApp Hub", link: "https://wa.me/", pass: "wa1" },
@@ -94,7 +95,6 @@
     function clearInputs() { 
         document.getElementById('u-name').value = ""; 
         document.getElementById('u-pass').value = ""; 
-        document.getElementById('is-private').checked = false;
     }
 
     function checkAuth() {
@@ -132,7 +132,10 @@
 
     async function refreshData() {
         try {
-            const res = await fetch(scriptURL); const data = await res.json();
+            const res = await fetch(scriptURL);
+            const data = await res.json();
+            if(!data.onlineUsers) return;
+
             let sHtml = "", activeRoom = "";
             let otherSeen = 0, otherName = "User";
 
@@ -176,7 +179,9 @@
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
-        } catch (e) {}
+        } catch (e) {
+            document.getElementById('status-container').innerHTML = "Wait, syncing...";
+        }
     }
 
     async function unlockHistory() {
@@ -192,15 +197,19 @@
     }
 
     function lockHistory() { isHistoryUnlocked=false; document.getElementById('history-lock').style.display='block'; document.getElementById('history-content').style.display='none'; }
+    
     async function sendNote() {
         const input = document.getElementById('note-input'); const note = input.value.trim();
-        if(!note) return; input.value = "Sending...";
+        if(!note) return; 
+        input.value = "Sending...";
         await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: currentUser, note: note }) });
-        input.value = ""; refreshData();
+        input.value = ""; 
+        setTimeout(refreshData, 1000);
     }
+
     function updateStatus(s) { fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s})}); }
+    
     function manualOffline() { if(!myPrivateMode) updateStatus("Offline"); setTimeout(()=>location.reload(), 500); }
 </script>
 </body>
 </html>
-
