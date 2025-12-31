@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia DC1 - Smart Sync</title>
+    <title>Secret Dunia DC1 - Master Sync</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -81,7 +81,7 @@
         { name: "Coming Soon", link: "#", pass: "000" }
     ];
 
-    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer;
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0;
 
     function updateFriendshipYear() {
         const years = new Date().getFullYear() - 2015;
@@ -102,14 +102,13 @@
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
             updateFriendshipYear(); resetInactivityTimer();
-            if(!isPrivateMode) updateStatus("Online");
-            // Dashboard reload par apni saari lights off kar denge
+            if(!isPrivateMode) updateStatus("Online", null);
             clearMyActivities();
             setInterval(refreshData, 5000); refreshData();
         } else { alert("Login Error!"); }
     }
 
-    window.onbeforeunload = function() { if(!isPrivateMode) updateStatus("Offline"); clearMyActivities(); };
+    window.onbeforeunload = function() { if(!isPrivateMode) updateStatus("Offline", null); clearMyActivities(); };
 
     async function refreshData() {
         try {
@@ -133,12 +132,19 @@
             document.getElementById('hub-grid').innerHTML = bHtml;
 
             let history = data.history || [];
+            totalMessages = history.length;
             let badge = document.getElementById('unread-badge');
-            if(history.length > 0) {
-                let last = history[history.length-1];
-                if(last.name.toUpperCase().includes(currentUser)) badge.innerHTML = (otherSeen >= history.length) ? `✅ ${otherName} Seen` : `⏳ Sent`;
-                else badge.innerHTML = history.length > (data.onlineUsers.find(u => u.name.toUpperCase().includes(currentUser))?.seenCount || 0) ? `💌 New Message` : `✅ All Read`;
+            
+            if(totalMessages > 0) {
+                let lastMsg = history[totalMessages - 1];
+                if(lastMsg.name.toUpperCase().includes(currentUser)) {
+                    badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
+                } else {
+                    let me = data.onlineUsers.find(u => u.name.toUpperCase().includes(currentUser));
+                    badge.innerHTML = (totalMessages > (me ? me.seenCount : 0)) ? `💌 New Message` : `✅ All Read`;
+                }
             }
+
             if(isUnlocked) {
                 let hHtml = ""; history.slice().reverse().forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
@@ -149,22 +155,16 @@
         } catch(e) {}
     }
 
-    async function enterRoom(roomName) {
-        const btnObj = hubButtons.find(b => b.name === roomName);
-        const p = prompt(`Enter Password for ${roomName}:`);
-        if (p === btnObj.pass) {
-            if(!isPrivateMode) await toggleButtonActivity(roomName, "on");
-            // Link opens in SAME tab to ensure activity clear on back
-            window.location.href = btnObj.link;
-        } else if (p !== null) alert("❌ Wrong Password!");
-    }
-
-    async function toggleButtonActivity(btn, state) {
-        await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:btn, state:state})});
-    }
-
-    async function clearMyActivities() {
-        hubButtons.forEach(async (btn) => { await toggleButtonActivity(btn.name, "off"); });
+    async function unlockHistory() {
+        if(isPrivateMode) { alert("Cannot unlock in Private Mode!"); return; }
+        if(prompt("Pass:")==="123") {
+            isUnlocked = true;
+            document.getElementById('unlock-btn').style.display = 'none';
+            document.getElementById('history-area').style.display = 'block';
+            // Jab unlock ho, to seenCount update kar do
+            updateStatus("Online", totalMessages);
+            refreshData();
+        }
     }
 
     function updateStatus(s, count) {
@@ -179,14 +179,21 @@
         document.getElementById('note-input').value = ""; refreshData();
     }
 
-    async function unlockHistory() {
-        if(isPrivateMode) return;
-        if(prompt("Pass:")==="123") {
-            isUnlocked = true;
-            document.getElementById('unlock-btn').style.display = 'none';
-            document.getElementById('history-area').style.display = 'block';
-            refreshData();
-        }
+    async function enterRoom(roomName) {
+        const btnObj = hubButtons.find(b => b.name === roomName);
+        const p = prompt(`Enter Password for ${roomName}:`);
+        if (p === btnObj.pass) {
+            if(!isPrivateMode) await toggleButtonActivity(roomName, "on");
+            window.location.href = btnObj.link;
+        } else if (p !== null) alert("❌ Wrong Password!");
+    }
+
+    async function toggleButtonActivity(btn, state) {
+        await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:btn, state:state})});
+    }
+
+    async function clearMyActivities() {
+        hubButtons.forEach(async (btn) => { await toggleButtonActivity(btn.name, "off"); });
     }
 
     function closeHistory() {
