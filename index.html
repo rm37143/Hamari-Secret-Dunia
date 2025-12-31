@@ -9,7 +9,7 @@
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .main-title { color: var(--pink); margin: 10px 0 20px 0; font-size: 1.8rem; font-weight: bold; }
-        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
         .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.65rem; border-left: 6px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
@@ -30,6 +30,7 @@
         .btn-dot-active { background: var(--green); box-shadow: 0 0 4px var(--green); }
         input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 25px; border: 1px solid #eee; text-align: center; outline: none; }
         .private-wrap { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 15px; color: #888; font-size: 0.8rem; }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; color: #777; font-weight: bold; font-size: 14px; line-height: 25px; text-align: center; }
         #dashboard { display: none; }
     </style>
 </head>
@@ -50,11 +51,16 @@
     <div id="dashboard">
         <div class="status-bar" id="status-container">Connecting...</div>
         <div class="card"><textarea id="note-input" placeholder="Write a Message..." onkeypress="if(event.key==='Enter') sendNote()"></textarea></div>
-        <div class="card">
-            <div id="unread-badge" class="msg-counter">Checking messages...</div>
+        
+        <div class="card" id="msg-card">
+            <div id="unread-badge" class="msg-counter">Checking...</div>
             <button id="unlock-btn" class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock Messages 🔒</button>
-            <div id="history-area" style="display:none;"><div class="history-box" id="notes-display"></div></div>
+            <div id="history-area" style="display:none;">
+                <button class="close-btn" onclick="closeHistory()">X</button>
+                <div class="history-box" id="notes-display"></div>
+            </div>
         </div>
+
         <div class="card">
             <div style="font-size:0.7rem; color:#888; margin-bottom:10px; font-weight:bold;">Buttons Box</div>
             <div class="btn-grid" id="hub-grid"></div>
@@ -63,9 +69,22 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxT0_6MmzcF5wSA_myWw5YEHgcYSfeCnx6sP5PuBLACBvyze6vZPyubXO7gJ9-GTm3o/exec';
+    // --- Naya URL Yahan Lag Gaya Hai ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwaQXyxkqRmBEDsLc4fr9LU818OlQNgsqqZRQ3idxVlIDcxoQIihf5xMKLtohudvP8w/exec';
+    
+    // --- BUTTONS SETTINGS (Link aur Pass badalne ke liye) ---
+    const hubButtons = [
+        { name: "Ai Assistant", link: "https://chatgpt.com", pass: "ai123" },
+        { name: "WhatsApp Hub", link: "https://web.whatsapp.com", pass: "wa123" },
+        { name: "Chat Room 1", link: "https://link1.com", pass: "c1" },
+        { name: "Chat Room 2", link: "https://link2.com", pass: "c2" },
+        { name: "Video Room", link: "https://link3.com", pass: "v1" },
+        { name: "Pinterest", link: "https://pinterest.com", pass: "p1" },
+        { name: "Mega Storage", link: "https://mega.nz", pass: "m1" },
+        { name: "Coming Soon", link: "#", pass: "000" }
+    ];
+
     let currentUser = "", isPrivateMode = false, isUnlocked = false, activeRoom = "";
-    const buttons = ["Ai Assistant", "WhatsApp Hub", "Chat Room 1", "Chat Room 2", "Video Room", "Pinterest", "Mega Storage", "Coming Soon"];
 
     function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
@@ -90,7 +109,7 @@
             const res = await fetch(scriptURL);
             const data = await res.json();
             
-            // 1. Status Display
+            // Online Status Update
             let sHtml = "";
             let otherSeen = 0, otherName = "";
             data.onlineUsers.forEach(u => {
@@ -107,15 +126,15 @@
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
-            // 2. Buttons Grid
+            // Buttons Display with Activity Light
             let bHtml = "";
-            buttons.forEach(btn => {
-                let lightClass = data.activeButtons[btn] === "on" ? "btn-dot-active" : "";
-                bHtml += `<div class="hub-btn" onclick="enterRoom('${btn}')">${btn}<span class="btn-dot ${lightClass}"></span></div>`;
+            hubButtons.forEach(btn => {
+                let lightClass = data.activeButtons[btn.name] === "on" ? "btn-dot-active" : "";
+                bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}')">${btn.name}<span class="btn-dot ${lightClass}"></span></div>`;
             });
             document.getElementById('hub-grid').innerHTML = bHtml;
 
-            // 3. Message Logic
+            // Message Counter
             let history = data.history || [];
             let badge = document.getElementById('unread-badge');
             if(history.length > 0) {
@@ -128,6 +147,7 @@
                 }
             }
 
+            // History Display
             if(isUnlocked) {
                 let hHtml = "";
                 history.slice().reverse().forEach(h => {
@@ -139,12 +159,20 @@
         } catch(e) {}
     }
 
-    async function enterRoom(room) {
-        if(activeRoom) await toggleButtonActivity(activeRoom, "off");
-        activeRoom = room;
-        await toggleButtonActivity(room, "on");
-        alert("Welcome to " + room);
-        // Yahan aap dashboard pe wapis aane pe light off karne ke liye button activity toggle kar sakte hain.
+    async function enterRoom(roomName) {
+        const btnObj = hubButtons.find(b => b.name === roomName);
+        const p = prompt(`Enter Password for ${roomName}:`);
+        
+        if (p === null) return; 
+
+        if (p === btnObj.pass) {
+            if(activeRoom) await toggleButtonActivity(activeRoom, "off");
+            activeRoom = roomName;
+            await toggleButtonActivity(roomName, "on");
+            window.open(btnObj.link, '_blank');
+        } else {
+            alert("❌ Wrong Password! Access Denied.");
+        }
     }
 
     async function toggleButtonActivity(btn, state) {
@@ -164,7 +192,7 @@
     }
 
     async function unlockHistory() {
-        if(isPrivateMode) { alert("Private mode mein lock nahi khul sakta!"); return; }
+        if(isPrivateMode) { return; }
         if(prompt("Pass:")==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
@@ -173,6 +201,12 @@
             updateStatus(null, data.history.length);
             refreshData();
         }
+    }
+
+    function closeHistory() {
+        isUnlocked = false;
+        document.getElementById('history-area').style.display = 'none';
+        document.getElementById('unlock-btn').style.display = 'block';
     }
 </script>
 </body>
