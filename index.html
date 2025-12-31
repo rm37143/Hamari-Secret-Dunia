@@ -13,7 +13,6 @@
         .card { background: var(--glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; }
         #login-screen h3 { color: var(--pink); margin-bottom: 20px; font-size: 1.5rem; }
         
-        /* Private Checkbox Styling */
         .private-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; font-size: 0.75rem; color: #888; font-weight: bold; }
         .private-wrap input { width: 14px !important; height: 14px !important; margin: 0 !important; cursor: pointer; accent-color: var(--blue); }
 
@@ -147,13 +146,16 @@
                     let displayStatus = u.status;
                     let dotClass = "dot-online";
                     
-                    // Logic: Agar koi Private hai aur wo main nahi hoon, to usay Offline dikhao
-                    if(isUserPrivate && !isMe) {
-                        displayStatus = "Offline";
-                        dotClass = "dot-offline";
-                    } else if (isUserPrivate && isMe) {
-                        displayStatus = "Private";
-                        dotClass = "dot-private";
+                    // NAYA LOGIC: Status gayab nahi hoga
+                    if(isUserPrivate) {
+                        if(isMe) {
+                            displayStatus = "Private";
+                            dotClass = "dot-private";
+                        } else {
+                            // Doosre user ko hamesha Offline hi nazar aayega
+                            displayStatus = "Offline";
+                            dotClass = "dot-offline";
+                        }
                     } else if (u.status === "Offline") {
                         dotClass = "dot-offline";
                     }
