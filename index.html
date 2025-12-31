@@ -19,6 +19,8 @@
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
+        /* Grey dot for Offline */
+        .dot-offline { background: var(--grey); box-shadow: none; }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; font-weight:bold; }
 
         /* Writing & History */
@@ -142,8 +144,11 @@
             let activeRoom = "";
             data.onlineUsers.forEach(u => {
                 if(u.name) {
+                    // Yahan check kar rahe hain ke status Offline hai ya Online
+                    let dotColor = u.status === "Offline" ? "dot-offline" : "dot-online";
+                    
                     sHtml += `<div class="user-row">
-                        <span><span class="dot dot-online"></span><b>${u.name}</b>: ${u.status}</span>
+                        <span><span class="dot ${dotColor}"></span><b>${u.name}</b>: ${u.status}</span>
                         <span>
                             <span style="color:#aaa; font-size:0.6rem; margin-right:5px;">${u.time}</span>
                             ${u.name.toUpperCase().includes(currentUser) ? `<button class="off-btn" onclick="manualOffline()">OFF</button>` : ''}
