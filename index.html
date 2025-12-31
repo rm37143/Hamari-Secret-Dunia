@@ -76,7 +76,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw6k2sXwPVQgixQQapCZhSR_QBPrRZCVslSRJXujhRNONB18jMiFodqvvoFRNZPBqgd/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbznkxMVNroTC0x7aunSogKqE5Lrxs0JFVAWe4_5iATg1woA1CNICo9REHbOWwLLTXxy/exec';
     const hubButtons = [
         { name: "Ai Assistant", link: "", pass: "ai1" },
         { name: "WhatsApp Hub", link: "https://wa.me/", pass: "wa1" },
@@ -137,7 +137,7 @@
             const res = await fetch(scriptURL); const data = await res.json();
             let sHtml = "", activeRoom = "";
             let otherUserSeenCount = 0;
-            let otherUserName = "";
+            let otherUserName = "User";
 
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
@@ -202,7 +202,9 @@
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
-        } catch (e) {}
+        } catch (e) {
+            document.getElementById('status-container').innerHTML = "Connection Error...";
+        }
     }
 
     async function unlockHistory() {
@@ -215,7 +217,6 @@
             const res = await fetch(scriptURL);
             const data = await res.json();
             let totalNow = data.history.length;
-            // E Column update logic
             fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, pass:currentID, seenCount: totalNow})});
             refreshData();
         }
