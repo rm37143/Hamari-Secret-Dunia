@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia DC1 - Master Sync</title>
+    <title>Secret Dunia DC1 - Final Fixed</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -81,7 +81,7 @@
         { name: "Coming Soon", link: "#", pass: "000" }
     ];
 
-    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0;
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0, myLastSeen = 0;
 
     function updateFriendshipYear() {
         const years = new Date().getFullYear() - 2015;
@@ -118,6 +118,7 @@
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
+                else { myLastSeen = u.seenCount; } // Store my current seen count
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 let statusText = (isMe && isPrivateMode) ? "Private Mode" : u.status;
                 sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span><span><small>${(isMe && isPrivateMode) ? '' : u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
@@ -140,8 +141,7 @@
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
                     badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
-                    let me = data.onlineUsers.find(u => u.name.toUpperCase().includes(currentUser));
-                    badge.innerHTML = (totalMessages > (me ? me.seenCount : 0)) ? `💌 New Message` : `✅ All Read`;
+                    badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
                 }
             }
 
@@ -161,14 +161,16 @@
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
-            // Jab unlock ho, to seenCount update kar do
-            updateStatus("Online", totalMessages);
+            myLastSeen = totalMessages; // Sync locally
+            updateStatus("Online", totalMessages); // Sync globally
             refreshData();
         }
     }
 
     function updateStatus(s, count) {
-        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
+        // Agar count null hai, to purana myLastSeen hi bhejo taake reset na ho
+        let finalCount = (count === null) ? myLastSeen : count;
+        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:finalCount})});
     }
 
     async function sendNote() {
@@ -193,6 +195,7 @@
     }
 
     async function clearMyActivities() {
+        // Is function mein sirf lights off hongi, seenCount nahi cherega
         hubButtons.forEach(async (btn) => { await toggleButtonActivity(btn.name, "off"); });
     }
 
