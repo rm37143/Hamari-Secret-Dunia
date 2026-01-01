@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia DC1 - Master Complete</title>
+    <title>Secret Dunia DC1 - R.M.Phase1</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -99,7 +99,6 @@
         isPrivateMode = document.getElementById('is-private').checked;
         if(n && (p==='37143' || p==='n37143')) {
             currentUser = n;
-            // Login se pehle data fetch karenge taake myLastSeen reset na ho
             await refreshData(); 
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
@@ -121,10 +120,7 @@
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
-                else { 
-                    // Server se latest seen uthayen
-                    if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; 
-                }
+                else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 let statusText = (isMe && isPrivateMode) ? "Private Mode" : u.status;
                 sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span><span><small>${(isMe && isPrivateMode) ? '' : u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
@@ -140,8 +136,14 @@
 
             let history = data.history || [];
             totalMessages = history.length;
-            let badge = document.getElementById('unread-badge');
             
+            // Phase1 Feature: Agar box khula hai to auto-seen kar do
+            if(isUnlocked && totalMessages > myLastSeen) {
+                myLastSeen = totalMessages;
+                updateStatus("Online", totalMessages);
+            }
+
+            let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
@@ -168,14 +170,14 @@
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
             myLastSeen = totalMessages; 
-            // Status Update aur foran refresh taake badge usi waqt badal jaye
             await updateStatus("Online", totalMessages);
             await refreshData();
         }
     }
 
     function updateStatus(s, count) {
-        return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
+        let val = (count === null) ? myLastSeen : count;
+        return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:val})});
     }
 
     async function sendNote() {
