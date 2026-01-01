@@ -11,6 +11,10 @@
         .dark-mode .status-bar { background: #333; color: #ddd; }
         .dark-mode textarea { color: white; }
         .dark-mode .hub-btn { background: #3d3d3d; border-color: #555; color: var(--pink); }
+        
+        /* Message bubble text fix: Hamesha black rahe ga */
+        .note-item div { color: #000 !important; }
+
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
         .container { width: 100%; max-width: 400px; text-align: center; position: relative; }
         .mode-toggle { position: fixed; top: 10px; left: 10px; z-index: 1000; background: var(--pink); color: white; border: none; padding: 4px 8px; border-radius: 12px; font-size: 0.55rem; font-weight: bold; cursor: pointer; opacity: 0.8; }
@@ -33,11 +37,8 @@
         .btn-main { background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; cursor: pointer; font-size: 0.85rem; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .hub-btn { background: #fff0f3; border: 1px solid #ffd1dc; padding: 10px 4px; border-radius: 12px; cursor: pointer; font-size: 0.65rem; font-weight: bold; color: #d63384; position: relative; }
-        
-        /* Buttons ki lights ko yahan se disable kiya gaya hai */
         .btn-dot { display: none !important; }
         .btn-dot-active { display: none !important; }
-
         .close-btn { position: absolute; top: 5px; right: 10px; background: #eee; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 0.6rem; }
         input { width: 85%; padding: 10px; margin: 8px 0; border-radius: 20px; border: 1px solid #eee; text-align: center; outline: none; }
         .friendship-tag { font-size: 0.65rem; color: #888; margin-top: 15px; font-weight: bold; border-top: 1px solid #ffd1dc; padding-top: 8px; }
@@ -97,7 +98,7 @@
         { name: "Video Room", link: "#", pass: "786" },
         { name: "Pinterest", link: "https://pin.it/2ltHmjbrB", pass: "786" },
         { name: "Mega Storage", link: "https://mega.nz/login", pass: "786" },
-        { name: "PC Storage", link: "https://drive.google.com/drive/folders/1yHexmY0ha8D0oFJcFVRO3IXc2GgI-ZX5?usp=sharing", pass: "000" }
+        { name: "PC Storage", link: "#", pass: "000" }
     ];
 
     let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0, myLastSeen = -1;
@@ -135,27 +136,26 @@
             
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
-                if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
+                [span_0](start_span)if(!isMe) { otherSeen = u.seenCount; otherName = u.name;[span_0](end_span) }
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
-                let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
+                let dotClass = u.status === "Online" ? [span_1](start_span)"dot-online" : "dot-offline";[span_1](end_span)
                 sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
             let bHtml = "";
             hubButtons.forEach(btn => {
-                // Button dot ka html yahan se khatam kar diya gaya hai
                 bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}')">${btn.name}</div>`;
             });
             document.getElementById('hub-grid').innerHTML = bHtml;
 
-            let history = data.history || [];
+            let history = data.history || [span_2](start_span)[];[span_2](end_span)
             totalMessages = history.length;
             if(isUnlocked && totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
 
             let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
-                let lastMsg = history[totalMessages - 1];
+                [span_3](start_span)let lastMsg = history[totalMessages - 1];[span_3](end_span)
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
                     badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
@@ -174,13 +174,16 @@
     }
 
     async function unlockHistory() {
-        if(prompt("Pass:")==="123") {
+        let p = prompt("Pass:");
+        if(p==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
             myLastSeen = totalMessages; 
             await updateStatus("Online", totalMessages);
             refreshData();
+        } else if (p !== null) {
+            alert("Wrong Password!");
         }
     }
 
@@ -198,10 +201,12 @@
 
     async function enterRoom(roomName) {
         const btnObj = hubButtons.find(b => b.name === roomName);
-        if (prompt(`Password for ${roomName}:`) === btnObj.pass) {
-            // Background mein signal jayega lekin user ko light nazar nahi aaye gi
+        let p = prompt(`Password for ${roomName}:`);
+        if (p === btnObj.pass) {
             await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:roomName, state:"on"})});
             window.location.href = btnObj.link;
+        } else if (p !== null) {
+            alert("Wrong Password!");
         }
     }
 
