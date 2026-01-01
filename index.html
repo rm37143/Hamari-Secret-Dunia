@@ -111,6 +111,7 @@
         const n = document.getElementById('u-name').value.toUpperCase().trim();
         const p = document.getElementById('u-pass').value.trim();
         isPrivateMode = document.getElementById('is-private').checked;
+        
         if(n && (p==='37143' || p==='n37143')) {
             currentUser = n;
             await refreshData(); 
@@ -119,7 +120,9 @@
             updateFriendshipYear(); resetInactivityTimer();
             if(!isPrivateMode) updateStatus("Online", myLastSeen);
             setInterval(refreshData, 5000);
-        } else { alert("Login Error!"); }
+        } else {
+            alert("Wrong Password!"); // Login par bhi alert wapis aa gaya
+        }
     }
 
     window.addEventListener('beforeunload', function() {
@@ -136,9 +139,9 @@
             
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
-                [span_0](start_span)if(!isMe) { otherSeen = u.seenCount; otherName = u.name;[span_0](end_span) }
+                if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
-                let dotClass = u.status === "Online" ? [span_1](start_span)"dot-online" : "dot-offline";[span_1](end_span)
+                let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
@@ -149,13 +152,13 @@
             });
             document.getElementById('hub-grid').innerHTML = bHtml;
 
-            let history = data.history || [span_2](start_span)[];[span_2](end_span)
+            let history = data.history || [];
             totalMessages = history.length;
             if(isUnlocked && totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
 
             let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
-                [span_3](start_span)let lastMsg = history[totalMessages - 1];[span_3](end_span)
+                let lastMsg = history[totalMessages - 1];
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
                     badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
@@ -175,6 +178,7 @@
 
     async function unlockHistory() {
         let p = prompt("Pass:");
+        if (p === null) return;
         if(p==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
@@ -182,7 +186,7 @@
             myLastSeen = totalMessages; 
             await updateStatus("Online", totalMessages);
             refreshData();
-        } else if (p !== null) {
+        } else {
             alert("Wrong Password!");
         }
     }
@@ -202,10 +206,11 @@
     async function enterRoom(roomName) {
         const btnObj = hubButtons.find(b => b.name === roomName);
         let p = prompt(`Password for ${roomName}:`);
+        if (p === null) return;
         if (p === btnObj.pass) {
             await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:roomName, state:"on"})});
             window.location.href = btnObj.link;
-        } else if (p !== null) {
+        } else {
             alert("Wrong Password!");
         }
     }
