@@ -25,16 +25,13 @@
         .status-bar { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 0.62rem; border-left: 5px solid var(--green); text-align: left; }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f9f9f9; }
         .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .dot-online { background: var(--green); }
+        .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
         .dot-offline { background: var(--grey); }
         .off-btn { background:#ff4d4d; color:white; border:none; border-radius:6px; padding:2px 8px; font-size:0.6rem; cursor:pointer; }
 
-        /* COMPACT WRITE BOX */
         textarea { width: 92%; border: none; background: transparent; padding: 5px; resize: none; outline: none; font-size: 0.95rem; color: #333; min-height: 35px; height: 35px; }
         
-        /* COMPACT HISTORY AREA */
         .history-box { height: 320px; overflow-y: auto; text-align: left; padding: 5px; }
-        #history-area { padding-top: 5px; } /* Removed extra space above status */
         .msg-counter { font-size: 0.65rem; font-weight: bold; color: var(--pink); margin-bottom: 4px; display: block; }
         
         .note-item { margin-bottom: 6px; padding: 6px 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.03); min-height: fit-content; }
@@ -128,6 +125,13 @@
             setInterval(refreshData, 5000);
         } else { alert("Login Error!"); }
     }
+
+    // This handles status update when closing tab
+    window.addEventListener('beforeunload', function() {
+        if (currentUser && !isPrivateMode) {
+            updateStatus("Offline", myLastSeen);
+        }
+    });
 
     async function refreshData() {
         try {
