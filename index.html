@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia DC1 - Final Fixed</title>
+    <title>Secret Dunia DC1 - Master Fixed</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -118,7 +118,10 @@
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
-                else { myLastSeen = u.seenCount; } // Store my current seen count
+                else { 
+                    // Update current seen from server to avoid "Sent" bug
+                    myLastSeen = u.seenCount; 
+                }
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 let statusText = (isMe && isPrivateMode) ? "Private Mode" : u.status;
                 sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span><span><small>${(isMe && isPrivateMode) ? '' : u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
@@ -139,8 +142,10 @@
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
+                    // Logic: Agar dusre ka seenCount aapke total msgs ke barabar ya zyada hai to "Seen"
                     badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
+                    // Logic: Agar aapka apna seenCount total se kam hai to "New Message"
                     badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
                 }
             }
@@ -156,21 +161,21 @@
     }
 
     async function unlockHistory() {
-        if(isPrivateMode) { alert("Cannot unlock in Private Mode!"); return; }
+        if(isPrivateMode) return;
         if(prompt("Pass:")==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
-            myLastSeen = totalMessages; // Sync locally
-            updateStatus("Online", totalMessages); // Sync globally
+            myLastSeen = totalMessages; // Update local seen count
+            updateStatus("Online", totalMessages); // Push to server immediately
             refreshData();
         }
     }
 
     function updateStatus(s, count) {
-        // Agar count null hai, to purana myLastSeen hi bhejo taake reset na ho
-        let finalCount = (count === null) ? myLastSeen : count;
-        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:finalCount})});
+        // Hamesha latest myLastSeen bhejen taake server reset na ho
+        let val = (count === null) ? myLastSeen : count;
+        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:val})});
     }
 
     async function sendNote() {
@@ -195,7 +200,6 @@
     }
 
     async function clearMyActivities() {
-        // Is function mein sirf lights off hongi, seenCount nahi cherega
         hubButtons.forEach(async (btn) => { await toggleButtonActivity(btn.name, "off"); });
     }
 
