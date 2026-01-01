@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Dunia DC1 - Master Fixed</title>
+    <title>Secret Dunia DC1 - Master Complete</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -81,7 +81,7 @@
         { name: "Coming Soon", link: "#", pass: "000" }
     ];
 
-    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0, myLastSeen = 0;
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, inactivityTimer, totalMessages = 0, myLastSeen = -1;
 
     function updateFriendshipYear() {
         const years = new Date().getFullYear() - 2015;
@@ -93,34 +93,37 @@
         if(currentUser) inactivityTimer = setTimeout(() => { location.reload(); }, 300000);
     }
 
-    function checkAuth() {
+    async function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
         const p = document.getElementById('u-pass').value.trim();
         isPrivateMode = document.getElementById('is-private').checked;
         if(n && (p==='37143' || p==='n37143')) {
             currentUser = n;
+            // Login se pehle data fetch karenge taake myLastSeen reset na ho
+            await refreshData(); 
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
             updateFriendshipYear(); resetInactivityTimer();
-            if(!isPrivateMode) updateStatus("Online", null);
+            if(!isPrivateMode) updateStatus("Online", myLastSeen);
             clearMyActivities();
-            setInterval(refreshData, 5000); refreshData();
+            setInterval(refreshData, 5000);
         } else { alert("Login Error!"); }
     }
 
-    window.onbeforeunload = function() { if(!isPrivateMode) updateStatus("Offline", null); clearMyActivities(); };
+    window.onbeforeunload = function() { if(!isPrivateMode) updateStatus("Offline", myLastSeen); clearMyActivities(); };
 
     async function refreshData() {
         try {
             const res = await fetch(scriptURL);
             const data = await res.json();
             let sHtml = ""; let otherSeen = 0, otherName = "";
+            
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 else { 
-                    // Update current seen from server to avoid "Sent" bug
-                    myLastSeen = u.seenCount; 
+                    // Server se latest seen uthayen
+                    if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; 
                 }
                 let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 let statusText = (isMe && isPrivateMode) ? "Private Mode" : u.status;
@@ -142,10 +145,8 @@
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
-                    // Logic: Agar dusre ka seenCount aapke total msgs ke barabar ya zyada hai to "Seen"
                     badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
-                    // Logic: Agar aapka apna seenCount total se kam hai to "New Message"
                     badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
                 }
             }
@@ -166,16 +167,15 @@
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
-            myLastSeen = totalMessages; // Update local seen count
-            updateStatus("Online", totalMessages); // Push to server immediately
-            refreshData();
+            myLastSeen = totalMessages; 
+            // Status Update aur foran refresh taake badge usi waqt badal jaye
+            await updateStatus("Online", totalMessages);
+            await refreshData();
         }
     }
 
     function updateStatus(s, count) {
-        // Hamesha latest myLastSeen bhejen taake server reset na ho
-        let val = (count === null) ? myLastSeen : count;
-        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:val})});
+        return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
     }
 
     async function sendNote() {
