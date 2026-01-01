@@ -3,70 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R.M.Phase1 Max</title>
+    <title>Secret Dunia DC1 - Original Optimized</title>
     <style>
-        :root { 
-            --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; 
-            --grey: #bdc3c7; --dark-bg: #1a1a1a; --dark-card: #2d2d2d; --text: #444; 
-        }
+        :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --dark-bg: #1a1a1a; }
+        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
+        body.dark-mode { background: #121212; }
         
-        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; height: 100vh; overflow: hidden; transition: 0.3s; }
-        body.dark-mode { background: #121212; color: #eee; }
+        .container { width: 100%; max-width: 400px; text-align: center; display: flex; flex-direction: column; }
+        .main-title { color: var(--pink); margin: 10px 0 5px 0; font-size: 1.8rem; font-weight: bold; }
+        .nisha-note { color: #d63384; font-size: 0.75rem; font-style: italic; margin-bottom: 20px; display: block; opacity: 0.8; }
+        
+        /* Corner Controls */
+        .top-controls { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 100; }
+        .mode-btn { background: var(--pink); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; cursor: pointer; font-weight: bold; }
 
-        .container { width: 100%; max-width: 380px; display: flex; flex-direction: column; height: 100%; }
+        .card { background: var(--glass); border-radius: 25px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid white; position: relative; transition: 0.3s; }
+        .dark-mode .card { background: #2d2d2d; border-color: #444; color: #eee; }
 
-        /* Dark Mode Toggle */
-        .mode-switch { position: absolute; top: 10px; left: 10px; z-index: 100; }
-        .mode-switch input { display: none; }
-        .mode-label { background: var(--pink); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.6rem; font-weight: bold; cursor: pointer; }
-
-        .main-title { color: var(--pink); margin: 5px 0; font-size: 1.5rem; font-weight: bold; }
-        .nisha-note { color: #d63384; font-size: 0.65rem; font-style: italic; margin-bottom: 10px; opacity: 0.8; }
-
-        .card { background: var(--glass); border-radius: 20px; padding: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 10px; border: 1px solid white; transition: 0.3s; }
-        .dark-mode .card { background: var(--dark-card); border-color: #444; color: #eee; }
-
-        .status-bar { background: #fff; padding: 8px; border-radius: 12px; margin-bottom: 10px; font-size: 0.6rem; border-left: 5px solid var(--green); text-align: left; }
+        .status-bar { background: #fff; padding: 12px; border-radius: 15px; margin-bottom: 15px; font-size: 0.65rem; border-left: 6px solid var(--green); text-align: left; }
         .dark-mode .status-bar { background: #333; color: #bbb; }
 
-        /* KEYBOARD FIX: Scrollable area with Flex */
-        #history-area { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 10px; }
-        .history-box { flex-grow: 1; overflow-y: auto; text-align: left; padding: 5px; -webkit-overflow-scrolling: touch; }
-        
-        /* Sticky Input Area */
-        .input-area { position: sticky; bottom: 0; background: transparent; }
-        textarea { width: 90%; border: none; background: #fff; padding: 10px; border-radius: 15px; outline: none; font-size: 0.9rem; color: #333; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
-        .dark-mode textarea { background: #444; color: #fff; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
+        .dot-offline { background: var(--grey); }
+        .off-btn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:4px 10px; font-size:0.65rem; cursor:pointer; font-weight:bold; }
 
-        .btn-main { background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; cursor: pointer; font-size: 0.85rem; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .hub-btn { background: #fff0f3; border: 1px solid #ffd1dc; padding: 8px; border-radius: 12px; cursor: pointer; font-size: 0.65rem; font-weight: bold; color: #d63384; position: relative; }
+        /* Small Chat Bubbles Fix */
+        .history-box { height: 280px; overflow-y: auto; text-align: left; padding: 10px; display: flex; flex-direction: column; }
+        .note-item { margin-bottom: 6px; padding: 8px 12px; border-radius: 12px; font-size: 0.8rem; line-height: 1.2; max-width: 85%; }
+        .note-awais { background-color: #ffe0e9 !important; border-left: 3px solid var(--pink); align-self: flex-start; } 
+        .note-nisha { background-color: #e3f2fd !important; border-left: 3px solid #2196f3; align-self: flex-end; }
+        .dark-mode .note-awais { background-color: #4a2b34 !important; color: #ffb6c1; }
+        .dark-mode .note-nisha { background-color: #1a3a4a !important; color: #add8e6; }
+
+        textarea { width: 90%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 1rem; color: #333; }
+        .dark-mode textarea { color: #fff; }
+        
+        .btn-main { background: var(--pink); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .hub-btn { background: #fff0f3; border: 1px solid #ffd1dc; padding: 12px 5px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; font-weight: bold; color: #d63384; position: relative; }
         .dark-mode .hub-btn { background: #3d3d3d; border-color: #555; color: #ff85a2; }
         
-        .user-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .dot { height: 7px; width: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .dot-online { background: var(--green); }
-        .dot-offline { background: var(--grey); }
+        .btn-dot { height: 6px; width: 6px; background: transparent; border-radius: 50%; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
+        .btn-dot-active { background: var(--green); box-shadow: 0 0 4px var(--green); }
 
-        .friendship-tag { font-size: 0.65rem; color: #888; margin-top: 5px; font-weight: bold; border-top: 1px solid #ffd1dc; padding-top: 5px; }
-        .signature-line { font-size: 0.6rem; color: #555; margin-top: 3px; font-style: italic; }
-        #dashboard { display: none; height: 100%; flex-direction: column; }
+        .friendship-tag { font-size: 0.75rem; color: #888; margin-top: 20px; font-weight: bold; border-top: 1px solid #ffd1dc; padding-top: 10px; }
+        .signature-line { font-size: 0.65rem; color: #555; margin-top: 8px; font-style: italic; letter-spacing: 1px; }
+        
+        #dashboard { display: none; }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: #eee; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
     </style>
 </head>
-<body onmousedown="resetInactivityTimer()" onkeydown="resetInactivityTimer()">
+<body>
 
-<div class="mode-switch">
-    <label class="mode-label" onclick="toggleDarkMode()">Light/Dark</label>
+<div class="top-controls">
+    <button class="mode-btn" onclick="toggleDarkMode()">Mode</button>
+    <div id="mini-status" style="font-size: 0.6rem; color: var(--pink); font-weight: bold; display:none;">Online</div>
 </div>
 
 <div class="container">
     <h2 class="main-title">Secret Dunia</h2>
     
-    <div id="login-screen" class="card" style="margin-top:20px;">
-        <span class="welcome-msg">Welcome</span>
-        <input type="text" id="u-name" placeholder="User Name" style="width:85%; padding:10px; margin:8px; border-radius:20px; border:1px solid #eee;">
-        <input type="password" id="u-pass" placeholder="Enter Key" style="width:85%; padding:10px; margin:8px; border-radius:20px; border:1px solid #eee;">
-        <div style="font-size:0.7rem; color:#888; margin:10px 0;">
+    <div id="login-screen" class="card">
+        <span class="welcome-msg" style="color:var(--pink); font-weight:bold;">Welcome</span>
+        <input type="text" id="u-name" placeholder="User Name" style="width:85%; padding:12px; margin:10px 0; border-radius:25px; border:1px solid #eee; text-align:center;">
+        <input type="password" id="u-pass" placeholder="Enter Key" style="width:85%; padding:12px; margin:10px 0; border-radius:25px; border:1px solid #eee; text-align:center;">
+        <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
             <input type="checkbox" id="is-private"> Private Mode
         </div>
         <button class="btn-main" onclick="checkAuth()">Enter World</button>
@@ -77,21 +80,23 @@
         
         <div class="status-bar" id="status-container">Syncing...</div>
 
-        <div id="history-area" class="card" style="display:none;">
-            <div id="unread-badge" style="font-size:0.65rem; font-weight:bold; color:var(--pink); margin-bottom:5px;"></div>
-            <div class="history-box" id="notes-display"></div>
+        <div class="card">
+            <textarea id="note-input" placeholder="Write a Message..." onfocus="keyboardMode(true)" onblur="keyboardMode(false)" onkeypress="if(event.key==='Enter') sendNote()"></textarea>
+            <button id="send-btn" class="btn-main" style="display:none; margin-top:5px; padding:8px;" onclick="sendNote()">Send Message</button>
         </div>
 
-        <button id="unlock-btn" class="btn-main" style="background:#444; margin-bottom:10px;" onclick="unlockHistory()">Unlock Messages 🔒</button>
-
-        <div class="input-area card">
-            <textarea id="note-input" rows="1" placeholder="Write a Message..." onkeypress="if(event.key==='Enter'){ event.preventDefault(); sendNote();}"></textarea>
-            <button class="btn-main" style="margin-top:5px; padding:8px;" onclick="sendNote()">Send</button>
+        <div class="card">
+            <div id="unread-badge" style="font-size:0.75rem; font-weight:bold; color:var(--pink); margin-bottom:8px;">Checking...</div>
+            <button id="unlock-btn" class="btn-main" style="background:#444;" onclick="unlockHistory()">Unlock Messages 🔒</button>
+            <div id="history-area" style="display:none;">
+                <button class="close-btn" onclick="closeHistory()">X</button>
+                <div class="history-box" id="notes-display"></div>
+            </div>
         </div>
 
         <div class="card"><div class="btn-grid" id="hub-grid"></div></div>
 
-        <div class="friendship-tag" id="friendship-tag">Friendship: Loading...</div>
+        <div class="friendship-tag">Friendship: 11 Years</div>
         <div class="signature-line">Signature: Awais by R.M.</div>
     </div>
 </div>
@@ -102,9 +107,13 @@
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-    function updateFriendshipYear() { document.getElementById('friendship-tag').innerHTML = `Friendship: ${new Date().getFullYear() - 2015} Years`; }
-
-    function resetInactivityTimer() { clearTimeout(inactivityTimer); if(currentUser) inactivityTimer = setTimeout(() => { location.reload(); }, 300000); }
+    function keyboardMode(isTyping) {
+        if(isTyping) {
+            document.getElementById('send-btn').style.display = 'block';
+            document.getElementById('mini-status').style.display = 'block';
+            window.scrollTo(0, 50); // Small scroll to focus on input
+        }
+    }
 
     async function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
@@ -114,10 +123,9 @@
             currentUser = n;
             await refreshData(); 
             document.getElementById('login-screen').style.display='none';
-            document.getElementById('dashboard').style.display='flex';
-            updateFriendshipYear(); resetInactivityTimer();
+            document.getElementById('dashboard').style.display='block';
             if(!isPrivateMode) updateStatus("Online", myLastSeen);
-            setInterval(refreshData, 3000); // Increased Speed to 3s
+            setInterval(refreshData, 4000);
         } else { alert("Error!"); }
     }
 
@@ -129,9 +137,13 @@
             
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
-                if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
-                else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
-                sHtml += `<div class="user-row"><span><span class="dot ${u.status==="Online"?"dot-online":"dot-offline"}"></span><b>${u.name}</b></span><span><small>${u.time}</small></span></div>`;
+                if(!isMe) { 
+                    otherSeen = u.seenCount; otherName = u.name; 
+                    if(u.status === "Online") document.getElementById('mini-status').innerText = u.name + " is Online";
+                } else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
+                
+                let dot = u.status === "Online" ? "dot-online" : "dot-offline";
+                sHtml += `<div class="user-row"><span><span class="dot ${dot}"></span><b>${u.name}</b>: ${u.status}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
@@ -147,25 +159,25 @@
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
                 if(lastMsg.name.toUpperCase().includes(currentUser)) {
-                    badge.innerHTML = (otherSeen >= totalMessages) ? `✅ Seen` : `⏳ Sent`;
+                    badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
                 } else {
-                    badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ Read All`;
+                    badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
                 }
             }
 
             if(isUnlocked) {
                 let hHtml = ""; history.slice().reverse().forEach(h => {
-                    let c = h.name.toUpperCase().includes("AWAIS") ? "#ffe0e9" : "#e3f2fd";
-                    hHtml += `<div style="background:${c}; padding:8px; border-radius:10px; margin-bottom:5px; font-size:0.8rem; color:#333;">${h.note}<br><small style="font-size:0.5rem; opacity:0.6;">${h.name}</small></div>`;
+                    let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
+                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><small style="font-size:0.5rem; opacity:0.6;">${h.time}</small></div>`;
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
             
             let bHtml = "";
-            const hubButtons = [{name:"Ai Assistant",link:"https://chatgpt.com",pass:"ai123"},{name:"WhatsApp",link:"https://web.whatsapp.com",pass:"wa123"}];
-            hubButtons.forEach(btn => {
-                let active = data.activeButtons[btn.name] === "on" ? "background:var(--green);" : "";
-                bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}','${btn.link}','${btn.pass}')">${btn.name}<span style="height:5px; width:5px; border-radius:50%; position:absolute; right:5px; top:5px; ${active}"></span></div>`;
+            const hubBtns = ["Ai Assistant", "WhatsApp Hub", "Chat Room 1", "Chat Room 2", "Video Room", "Pinterest", "Mega Storage", "Coming Soon"];
+            hubBtns.forEach(name => {
+                let light = data.activeButtons[name] === "on" ? "btn-dot-active" : "";
+                bHtml += `<div class="hub-btn">${name}<span class="btn-dot ${light}"></span></div>`;
             });
             document.getElementById('hub-grid').innerHTML = bHtml;
         } catch(e) {}
@@ -175,7 +187,7 @@
         if(prompt("Pass:")==="123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
-            document.getElementById('history-area').style.display = 'flex';
+            document.getElementById('history-area').style.display = 'block';
             myLastSeen = totalMessages; 
             await updateStatus("Online", totalMessages);
             refreshData();
@@ -183,7 +195,7 @@
     }
 
     function updateStatus(s, count) {
-        return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
+        fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})});
     }
 
     async function sendNote() {
@@ -194,8 +206,10 @@
         refreshData();
     }
 
-    async function enterRoom(n, l, p) {
-        if(prompt(`Pass for ${n}:`) === p) window.location.href = l;
+    function closeHistory() {
+        isUnlocked = false;
+        document.getElementById('history-area').style.display = 'none';
+        document.getElementById('unlock-btn').style.display = 'block';
     }
 </script>
 </body>
