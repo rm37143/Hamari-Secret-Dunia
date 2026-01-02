@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R.M.Phase1 Final</title>
+    <title>R.M.Phase1 Final Fix</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body.dark-mode { background: #1a1a1a; }
@@ -111,11 +111,11 @@
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
             
-            // Initial update with correct status
+            // Foran update karo status database mein
             const statusToSet = isPrivateMode ? "Private Mode" : "Online";
-            await updateStatus(statusToSet, myLastSeen);
+            updateStatus(statusToSet, myLastSeen);
+            
             await refreshData();
-
             updateFriendshipYear(); resetInactivityTimer();
             setInterval(refreshData, 5000);
         } else { alert("Wrong Password!"); }
@@ -141,34 +141,31 @@
             let sHtml = ""; let otherSeen = 0, otherName = "";
             
             data.onlineUsers.forEach(u => {
-                let isMe = u.name.toUpperCase().includes(currentUser);
+                let nameUpper = u.name.toUpperCase();
+                let isMe = nameUpper.includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 
                 let dotClass = "dot-offline";
-                let displayStatus = u.status;
+                let statusToDisplay = u.status;
 
-                // UI display logic for status bar
-                if(u.status === "Online") { 
-                    dotClass = "dot-online"; 
-                } else if(u.status === "Private Mode") {
-                    dotClass = "dot-offline"; // Private mode uses offline dot as requested
-                    displayStatus = "Private Mode";
+                // SPECIAL FIX: Force "Private Mode" text if database says so OR if it's ME and I am in private mode
+                if (statusToDisplay === "Private Mode" || (isMe && isPrivateMode)) {
+                    statusToDisplay = "Private Mode";
+                    dotClass = "dot-offline";
+                } else if (statusToDisplay === "Online") {
+                    dotClass = "dot-online";
+                } else {
+                    dotClass = "dot-offline";
                 }
 
-                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusToDisplay}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
-            let bHtml = "";
-            hubButtons.forEach(btn => {
-                bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}')">${btn.name}</div>`;
-            });
-            document.getElementById('hub-grid').innerHTML = bHtml;
-
+            // Rest of the logic (Badge, History etc.)
             let history = data.history || [];
             totalMessages = history.length;
-            
             let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
@@ -187,21 +184,25 @@
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
-        } catch(e) {}
+
+            let bHtml = "";
+            hubButtons.forEach(btn => { bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}')">${btn.name}</div>`; });
+            document.getElementById('hub-grid').innerHTML = bHtml;
+
+        } catch(e) { console.log("Refresh Error"); }
     }
 
     async function unlockHistory() {
         if(isPrivateMode) { alert("Not allowed in Private Mode!"); return; }
         let p = prompt("Pass:");
-        if (p === null) return;
-        if(p==="123") {
+        if (p === "123") {
             isUnlocked = true;
             document.getElementById('unlock-btn').style.display = 'none';
             document.getElementById('history-area').style.display = 'block';
             myLastSeen = totalMessages; 
-            await updateStatus("Online", totalMessages);
+            updateStatus("Online", totalMessages);
             refreshData();
-        } else { alert("Wrong Password!"); }
+        } else if (p !== null) { alert("Wrong Password!"); }
     }
 
     function updateStatus(s, count) {
@@ -220,11 +221,10 @@
     async function enterRoom(roomName) {
         const btnObj = hubButtons.find(b => b.name === roomName);
         let p = prompt(`Password for ${roomName}:`);
-        if (p === null) return;
         if (p === btnObj.pass) {
-            await fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:roomName, state:"on"})});
+            fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"buttonActivity", buttonName:roomName, state:"on"})});
             window.location.href = btnObj.link;
-        } else { alert("Wrong Password!"); }
+        } else if (p !== null) { alert("Wrong Password!"); }
     }
 
     function closeHistory() { isUnlocked = false; document.getElementById('history-area').style.display = 'none'; document.getElementById('unlock-btn').style.display = 'block'; }
