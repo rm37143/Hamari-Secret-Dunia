@@ -108,16 +108,13 @@
         isPrivateMode = document.getElementById('is-private').checked;
         if(n && (p==='37143' || p==='n37143')) {
             currentUser = n;
-            await refreshData(); 
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
             
-            // Database update with status
-            if(isPrivateMode) {
-                updateStatus("Private Mode", -1);
-            } else {
-                updateStatus("Online", myLastSeen);
-            }
+            // Initial update with correct status
+            const statusToSet = isPrivateMode ? "Private Mode" : "Online";
+            await updateStatus(statusToSet, myLastSeen);
+            await refreshData();
 
             updateFriendshipYear(); resetInactivityTimer();
             setInterval(refreshData, 5000);
@@ -149,13 +146,17 @@
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 
                 let dotClass = "dot-offline";
-                let statusText = u.status;
+                let displayStatus = u.status;
 
-                // Fixing status text display logic
-                if(u.status === "Online") { dotClass = "dot-online"; }
-                else if(u.status === "Private Mode") { dotClass = "dot-offline"; statusText = "Private Mode"; }
+                // UI display logic for status bar
+                if(u.status === "Online") { 
+                    dotClass = "dot-online"; 
+                } else if(u.status === "Private Mode") {
+                    dotClass = "dot-offline"; // Private mode uses offline dot as requested
+                    displayStatus = "Private Mode";
+                }
 
-                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
