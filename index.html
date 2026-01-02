@@ -163,35 +163,31 @@
             let history = data.history || [];
             totalMessages = history.length;
             
-            if(!isPrivateMode) {
-                if(isUnlocked && totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
-                let badge = document.getElementById('unread-badge');
-                if(totalMessages > 0) {
-                    let lastMsg = history[totalMessages - 1];
-                    if(lastMsg.name.toUpperCase().includes(currentUser)) {
-                        badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
-                    } else {
-                        badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
-                    }
+            // Message status hamesha dikhayen, chahe private mode ho
+            let badge = document.getElementById('unread-badge');
+            if(totalMessages > 0) {
+                let lastMsg = history[totalMessages - 1];
+                if(lastMsg.name.toUpperCase().includes(currentUser)) {
+                    badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
+                } else {
+                    badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
                 }
-                if(isUnlocked) {
-                    let hHtml = ""; history.slice().reverse().forEach(h => {
-                        let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
-                        hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${h.time}</span></div>`;
-                    });
-                    document.getElementById('notes-display').innerHTML = hHtml;
-                }
-            } else {
-                document.getElementById('unread-badge').innerHTML = "Locked";
+            }
+
+            // Sirf message ki list ko block rakhen private mode mein
+            if(!isPrivateMode && isUnlocked) {
+                if(totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
+                let hHtml = ""; history.slice().reverse().forEach(h => {
+                    let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
+                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${h.time}</span></div>`;
+                });
+                document.getElementById('notes-display').innerHTML = hHtml;
             }
         } catch(e) {}
     }
 
     async function unlockHistory() {
-        if(isPrivateMode) {
-            alert("Not allowed in Private Mode!");
-            return;
-        }
+        if(isPrivateMode) { alert("Not allowed in Private Mode!"); return; }
         let p = prompt("Pass:");
         if (p === null) return;
         if(p==="123") {
