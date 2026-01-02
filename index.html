@@ -112,6 +112,7 @@
             document.getElementById('login-screen').style.display='none';
             document.getElementById('dashboard').style.display='block';
             
+            // Database update with status
             if(isPrivateMode) {
                 updateStatus("Private Mode", -1);
             } else {
@@ -148,9 +149,13 @@
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 
                 let dotClass = "dot-offline";
-                if(u.status === "Online") { dotClass = "dot-online"; }
+                let statusText = u.status;
 
-                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
+                // Fixing status text display logic
+                if(u.status === "Online") { dotClass = "dot-online"; }
+                else if(u.status === "Private Mode") { dotClass = "dot-offline"; statusText = "Private Mode"; }
+
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${statusText}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
@@ -163,7 +168,6 @@
             let history = data.history || [];
             totalMessages = history.length;
             
-            // Message status hamesha dikhayen, chahe private mode ho
             let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
@@ -174,7 +178,6 @@
                 }
             }
 
-            // Sirf message ki list ko block rakhen private mode mein
             if(!isPrivateMode && isUnlocked) {
                 if(totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
                 let hHtml = ""; history.slice().reverse().forEach(h => {
