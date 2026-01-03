@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R.M.Phase1 Final Original</title>
+    <title>R.M.Phase1 Final Stable</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body.dark-mode { background: #1a1a1a; }
@@ -49,7 +49,7 @@
 <body onmousedown="resetInactivityTimer()" onkeydown="resetInactivityTimer()">
 
 <button class="mode-toggle" onclick="toggleTheme()">LIGHT/DARK</button>
-<button class="sound-toggle" id="sound-btn" onclick="toggleSound()">🔔</button>
+<button class="sound-toggle" id="sound-btn" onclick="toggleSound()">🔕</button>
 
 <div class="container">
     <h2 class="main-title">Secret Dunia</h2>
@@ -108,7 +108,7 @@
         { name: "PC Storage", link: "#", pass: "000" }
     ];
 
-    let currentUser = "", isPrivateMode = false, isUnlocked = false, totalMessages = 0, myLastSeen = -1, isMuted = false, inactivityTimer;
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, totalMessages = 0, myLastSeen = -1, isMuted = true, inactivityTimer;
 
     function toggleTheme() { document.body.classList.toggle('dark-mode'); }
     function toggleSound() { isMuted = !isMuted; document.getElementById('sound-btn').innerText = isMuted ? "🔕" : "🔔"; }
@@ -135,13 +135,19 @@
             let sHtml = ""; let otherSeen = 0, otherName = "";
             
             data.onlineUsers.forEach(u => {
-                let isMe = u.name.toUpperCase().includes(currentUser);
+                let uNameUpper = u.name.toUpperCase();
+                let isMe = uNameUpper.includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 
-                let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
-                let pulse = u.status === "Online" ? '<span class="pulse">❤️</span>' : '';
-                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}${pulse}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
+                // FIXED PRIVATE MODE LOGIC
+                let displayStatus = u.status;
+                if(isMe && isPrivateMode) displayStatus = "Private Mode";
+                
+                let dotClass = displayStatus === "Online" ? "dot-online" : "dot-offline";
+                let pulse = displayStatus === "Online" ? '<span class="pulse">❤️</span>' : '';
+                
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}${pulse}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
@@ -151,7 +157,6 @@
             }
             totalMessages = history.length;
             
-            // SEEN STATUS LOGIC RESTORED
             let badge = document.getElementById('unread-badge');
             if(totalMessages > 0) {
                 let lastMsg = history[totalMessages - 1];
@@ -167,6 +172,7 @@
                 let hHtml = ""; 
                 history.slice().reverse().forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
+                    // Display Time and Date from Sheet
                     hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${h.time}</span></div>`;
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
