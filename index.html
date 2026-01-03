@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secret Dunia Pro</title>
+    <title>R.M.Phase1 Final Original</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body.dark-mode { background: #1a1a1a; }
@@ -12,79 +12,78 @@
         .dark-mode textarea { color: white; }
         .dark-mode .hub-btn { background: #3d3d3d; border-color: #555; color: var(--pink); }
         .note-item div { color: #000 !important; }
+        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; }
+        .container { width: 100%; max-width: 400px; text-align: center; position: relative; }
         
-        body { background: #fce4ec; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
-        .container { width: 100%; max-width: 400px; text-align: center; position: relative; z-index: 10; }
+        .mode-toggle { position: fixed; top: 10px; left: 10px; z-index: 1000; background: var(--pink); color: white; border: none; padding: 6px 10px; border-radius: 12px; font-size: 0.55rem; font-weight: bold; cursor: pointer; opacity: 0.8; }
+        .sound-toggle { position: fixed; top: 10px; right: 10px; z-index: 1000; background: var(--pink); color: white; border: none; padding: 6px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; cursor: pointer; opacity: 0.8; }
 
-        /* Floating Animation */
-        .bg-animate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .heart-float { position: absolute; color: var(--pink); opacity: 0.3; animation: float 6s infinite linear; font-size: 20px; }
-        @keyframes float { 0% { transform: translateY(100vh) rotate(0deg); } 100% { transform: translateY(-10vh) rotate(360deg); } }
-
-        /* Control Buttons */
-        .mode-toggle { position: fixed; top: 10px; left: 10px; z-index: 1000; background: var(--pink); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 0.55rem; font-weight: bold; cursor: pointer; }
-        .sound-toggle { position: fixed; top: 10px; right: 10px; z-index: 1000; background: var(--pink); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-
-        /* Status & Heart Pulse */
+        .main-title { color: var(--pink); margin: 5px 0; font-size: 1.6rem; font-weight: bold; }
+        .nisha-note { color: #d63384; font-size: 0.7rem; font-style: italic; margin-bottom: 12px; display: block; opacity: 0.8; }
+        .card { background: var(--glass); border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 10px; border: 1px solid white; position: relative; }
         .status-bar { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 0.62rem; border-left: 5px solid var(--green); text-align: left; }
         .pulse { display: inline-block; color: red; animation: beat 1s infinite; margin-left: 5px; font-size: 10px; }
         @keyframes beat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-
-        /* Cards & Buttons */
-        .card { background: var(--glass); border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 10px; border: 1px solid white; position: relative; }
-        .btn-main { background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; cursor: pointer; font-size: 0.85rem; }
-        .gift-btn { background: #ffeb3b; color: #333; border: none; padding: 8px; border-radius: 15px; font-size: 0.7rem; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Notes & History */
-        .note-item { margin-bottom: 8px; padding: 8px 12px; border-radius: 15px; text-align: left; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f9f9f9; }
+        .dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .dot-online { background: var(--green); box-shadow: 0 0 5px var(--green); }
+        .dot-offline { background: var(--grey); }
+        .off-btn { background:#ff4d4d; color:white; border:none; border-radius:6px; padding:2px 8px; font-size:0.6rem; cursor:pointer; }
+        textarea { width: 92%; border: none; background: transparent; padding: 5px; resize: none; outline: none; font-size: 0.95rem; color: #333; min-height: 35px; height: 35px; }
+        .history-box { height: 320px; overflow-y: auto; text-align: left; padding: 5px; }
+        .msg-counter { font-size: 0.65rem; font-weight: bold; color: var(--pink); margin-bottom: 4px; display: block; }
+        .note-item { margin-bottom: 6px; padding: 6px 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.03); min-height: fit-content; }
         .note-awais { background-color: #ffe0e9 !important; border-left: 4px solid var(--pink); } 
         .note-nisha { background-color: #e3f2fd !important; border-left: 4px solid #2196f3; }
-        .note-meta { font-size: 0.5rem; color: #666; display: block; margin-top: 4px; font-weight: bold; }
-        .history-box { height: 350px; overflow-y: auto; padding-right: 5px; }
-        
-        textarea { width: 92%; border: none; background: transparent; padding: 10px; resize: none; outline: none; font-size: 0.95rem; }
+        .note-meta { font-size: 0.52rem; color: #777; margin-top: 1px; display: block; }
+        .btn-main { background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; cursor: pointer; font-size: 0.85rem; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .hub-btn { background: #fff0f3; border: 1px solid #ffd1dc; padding: 10px 4px; border-radius: 12px; cursor: pointer; font-size: 0.65rem; font-weight: bold; color: #d63384; position: relative; }
+        .close-btn { position: absolute; top: 5px; right: 10px; background: #eee; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 0.6rem; }
+        input { width: 85%; padding: 10px; margin: 8px 0; border-radius: 20px; border: 1px solid #eee; text-align: center; outline: none; }
+        .friendship-tag { font-size: 0.65rem; color: #888; margin-top: 15px; font-weight: bold; border-top: 1px solid #ffd1dc; padding-top: 8px; }
         #dashboard { display: none; }
-        .close-btn { position: absolute; top: 10px; right: 10px; background: #eee; border: none; border-radius: 50%; padding: 5px 8px; cursor: pointer; }
     </style>
 </head>
 <body onmousedown="resetInactivityTimer()" onkeydown="resetInactivityTimer()">
-
-<div class="bg-animate" id="bg-stars"></div>
 
 <button class="mode-toggle" onclick="toggleTheme()">LIGHT/DARK</button>
 <button class="sound-toggle" id="sound-btn" onclick="toggleSound()">🔔</button>
 
 <div class="container">
-    <h2 style="color:var(--pink); margin-bottom:10px;">Secret Dunia</h2>
-    
+    <h2 class="main-title">Secret Dunia</h2>
     <div id="login-screen" class="card">
-        <input type="text" id="u-name" placeholder="User Name" style="width:85%; padding:10px; margin-bottom:10px; border-radius:20px; border:1px solid #eee;">
-        <input type="password" id="u-pass" placeholder="Enter Key" style="width:85%; padding:10px; margin-bottom:10px; border-radius:20px; border:1px solid #eee;">
-        <div style="font-size:0.7rem; color:#888; margin-bottom:10px;">
-            <input type="checkbox" id="is-private"> Private Mode
+        <span class="welcome-msg" style="color:var(--pink); font-weight:bold; font-size:1.1rem;">Welcome</span>
+        <input type="text" id="u-name" placeholder="User Name">
+        <input type="password" id="u-pass" placeholder="Enter Key">
+        <div style="font-size:0.75rem; color:#888; margin-bottom:12px;">
+            <input type="checkbox" id="is-private" style="width:14px;"> <span>Private Mode</span>
         </div>
         <button class="btn-main" onclick="checkAuth()">Enter World</button>
     </div>
 
     <div id="dashboard">
+        <span class="nisha-note">Nisha ye sub ap k Liye banaya or ye ap k Liye hi rahy ga hamesha.</span>
         <div class="status-bar" id="status-container">Syncing...</div>
         
         <div class="card" style="padding: 10px;">
-            <textarea id="note-input" placeholder="Write a message..." onkeypress="if(event.key==='Enter') sendNote()"></textarea>
+            <textarea id="note-input" placeholder="Write a Message..." onfocus="checkPrivateStatus()" onkeypress="if(event.key==='Enter') sendNote()"></textarea>
         </div>
 
         <div class="card" style="padding: 10px;">
-            <div id="unread-badge" style="font-size:0.6rem; color:var(--pink); font-weight:bold; margin-bottom:5px;"></div>
-            <button id="unlock-btn" class="btn-main" style="background:#444;" onclick="unlockHistory()">Unlock Messages 🔒</button>
+            <div id="unread-badge" class="msg-counter">Checking...</div>
+            <button id="unlock-btn" class="btn-main" style="background:var(--dark);" onclick="unlockHistory()">Unlock Messages 🔒</button>
             <div id="history-area" style="display:none;">
                 <button class="close-btn" onclick="closeHistory()">X</button>
                 <div class="history-box" id="notes-display"></div>
             </div>
-            <button class="gift-btn" onclick="showSurprise()">Open Surprise Gift 🎁</button>
         </div>
 
-        <div id="hub-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
-        <div style="font-size:0.6rem; color:#888; margin-top:20px;" id="friendship-tag"></div>
+        <div class="card" style="padding: 10px;"><div class="btn-grid" id="hub-grid"></div></div>
+        
+        <div class="friendship-tag" id="friendship-tag">Friendship: Loading...</div>
+        <div style="font-size:0.6rem; color:#555; margin-top:5px; font-style:italic;">Signature: Awais by R.M.</div>
     </div>
 </div>
 
@@ -97,30 +96,23 @@
         newMsg: new Audio('https://assets.mixkit.co/active_storage/sfx/2361/2361-preview.mp3')
     };
 
-    let currentUser = "", isPrivateMode = false, isUnlocked = false, totalMessages = 0, myLastSeen = -1, isMuted = false;
+    const hubButtons = [
+        { name: "Ai Assistant", link: "https://gemini.google.com/app", pass: "786" },
+        { name: "WhatsApp Hub", link: "https://wa.me/923059763620", pass: "786" },
+        { name: "Chat Room 1", link: "https://hack.chat/?r.m.", pass: "786" },
+        { name: "Chat Room 2", link: "https://hack.chat/?r.m.37143", pass: "786" },
+        { name: "Protected Text", link: "https://www.protectedtext.com/r.m.", pass: "786" },
+        { name: "Video Room", link: "#", pass: "786" },
+        { name: "Pinterest", link: "https://pin.it/2ltHmjbrB", pass: "786" },
+        { name: "Mega Storage", link: "https://mega.nz/login", pass: "786" },
+        { name: "PC Storage", link: "#", pass: "000" }
+    ];
 
-    // Background Animation
-    function initAnimate() {
-        const bg = document.getElementById('bg-stars');
-        for(let i=0; i<15; i++) {
-            let h = document.createElement('div');
-            h.className = 'heart-float';
-            h.innerHTML = '❤️';
-            h.style.left = Math.random() * 100 + 'vw';
-            h.style.animationDelay = Math.random() * 5 + 's';
-            bg.appendChild(h);
-        }
-    }
-    initAnimate();
+    let currentUser = "", isPrivateMode = false, isUnlocked = false, totalMessages = 0, myLastSeen = -1, isMuted = false, inactivityTimer;
 
     function toggleTheme() { document.body.classList.toggle('dark-mode'); }
     function toggleSound() { isMuted = !isMuted; document.getElementById('sound-btn').innerText = isMuted ? "🔕" : "🔔"; }
-    function playSound(type) { if(!isMuted) sounds[type].play().catch(e=>{}); }
-
-    function showSurprise() {
-        const msgs = ["You are Special! ✨", "Hamesha khush rahen 😊", "Nisha is the Best! 💖", "Keep Smiling! 🌸"];
-        alert(msgs[Math.floor(Math.random() * msgs.length)]);
-    }
+    function playSound(t) { if(!isMuted) sounds[t].play().catch(e=>{}); }
 
     async function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
@@ -132,57 +124,62 @@
             document.getElementById('dashboard').style.display='block';
             updateStatus(isPrivateMode ? "Private Mode" : "Online", -1);
             setInterval(refreshData, 5000); refreshData();
-            document.getElementById('friendship-tag').innerText = `Friendship: ${new Date().getFullYear()-2015} Years | Signature: Awais by R.M.`;
-        } else { alert("Wrong Key!"); }
+            document.getElementById('friendship-tag').innerHTML = `Friendship: ${new Date().getFullYear() - 2015} Years`;
+        } else { alert("Wrong Password!"); }
     }
 
     async function refreshData() {
         try {
             const res = await fetch(scriptURL);
             const data = await res.json();
-            let sHtml = ""; let otherSeen = 0;
+            let sHtml = ""; let otherSeen = 0, otherName = "";
             
             data.onlineUsers.forEach(u => {
                 let isMe = u.name.toUpperCase().includes(currentUser);
-                if(!isMe) { otherSeen = u.seenCount; }
-                let dot = u.status === "Online" ? "dot-online" : "dot-offline";
+                if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
+                else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
+                
+                let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
                 let pulse = u.status === "Online" ? '<span class="pulse">❤️</span>' : '';
-                sHtml += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f9f9f9;">
-                    <span><span class="dot ${dot}"></span><b>${u.name}</b>: ${u.status}${pulse}</span>
-                    <small style="color:#999;">${u.time}</small>
-                </div>`;
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}${pulse}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
             const history = data.history || [];
-            if(history.length > totalMessages && totalMessages !== 0) playSound('newMsg');
+            if(history.length > totalMessages && totalMessages !== 0) {
+                if(!history[history.length-1].name.toUpperCase().includes(currentUser)) playSound('newMsg');
+            }
             totalMessages = history.length;
+            
+            // SEEN STATUS LOGIC RESTORED
+            let badge = document.getElementById('unread-badge');
+            if(totalMessages > 0) {
+                let lastMsg = history[totalMessages - 1];
+                if(lastMsg.name.toUpperCase().includes(currentUser)) {
+                    badge.innerHTML = (otherSeen >= totalMessages) ? `✅ ${otherName} Seen` : `⏳ Sent`;
+                } else {
+                    badge.innerHTML = (totalMessages > myLastSeen) ? `💌 New Message` : `✅ All Read`;
+                }
+            }
 
             if(isUnlocked && !isPrivateMode) {
-                let hHtml = "";
+                if(totalMessages > myLastSeen) { myLastSeen = totalMessages; updateStatus("Online", totalMessages); }
+                let hHtml = ""; 
                 history.slice().reverse().forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
-                    // Displaying Date and Time together
-                    let dateStr = h.time.includes("/") ? h.time : "New Message"; 
-                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${dateStr}</span></div>`;
+                    hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${h.time}</span></div>`;
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
             }
 
-            const hub = [
-                {n:"Ai Assistant", l:"https://gemini.google.com/app"},
-                {n:"WhatsApp Hub", l:"https://wa.me/923059763620"},
-                {n:"Chat Room", l:"https://hack.chat/?r.m."},
-                {n:"Pinterest", l:"https://pin.it/2ltHmjbrB"}
-            ];
-            let bHtml = ""; hub.forEach(b => { bHtml += `<button class="hub-btn" style="background:#fff; border:1px solid #ffd1dc; padding:8px; border-radius:12px; font-size:0.6rem; font-weight:bold; color:var(--pink);" onclick="window.location.href='${b.l}'">${b.n}</button>`; });
+            let bHtml = "";
+            hubButtons.forEach(btn => { bHtml += `<div class="hub-btn" onclick="enterRoom('${btn.name}', '${btn.link}', '${btn.pass}')">${btn.name}</div>`; });
             document.getElementById('hub-grid').innerHTML = bHtml;
-            
         } catch(e) {}
     }
 
     async function sendNote() {
-        if(isPrivateMode) { alert("Private Mode Active!"); return; }
+        if(isPrivateMode) return;
         const msg = document.getElementById('note-input').value.trim();
         if(!msg) return;
         document.getElementById('note-input').value = "Sending...";
@@ -190,10 +187,17 @@
         playSound('sent'); document.getElementById('note-input').value = ""; refreshData();
     }
 
-    function updateStatus(s, c) { fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, seenCount:c})}); }
+    function enterRoom(n, l, p) {
+        let pass = prompt(`Password for ${n}:`);
+        if (pass === p) window.location.href = l;
+        else if (pass !== null) alert("Wrong Password!");
+    }
+
+    function updateStatus(s, count) { return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})}); }
     function unlockHistory() { let p = prompt("Pass:"); if(p==="123") { isUnlocked = true; document.getElementById('unlock-btn').style.display='none'; document.getElementById('history-area').style.display='block'; refreshData(); } }
     function closeHistory() { isUnlocked = false; document.getElementById('history-area').style.display='none'; document.getElementById('unlock-btn').style.display='block'; }
-    function resetInactivityTimer() { /* basic idle logic */ }
+    function checkPrivateStatus() { if(isPrivateMode) { alert("Not allowed in Private Mode!"); document.getElementById('note-input').blur(); } }
+    function resetInactivityTimer() { clearTimeout(inactivityTimer); if(currentUser) inactivityTimer = setTimeout(() => { location.reload(); }, 300000); }
 </script>
 </body>
 </html>
