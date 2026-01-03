@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R.M.Phase1 Final Stable</title>
+    <title>Secret Dunia Pro - Final Stable</title>
     <style>
         :root { --pink: #ff85a2; --glass: rgba(255, 255, 255, 0.9); --green: #2ecc71; --grey: #bdc3c7; --blue: #a2d2ff; --dark: #444; }
         body.dark-mode { background: #1a1a1a; }
@@ -114,6 +114,11 @@
     function toggleSound() { isMuted = !isMuted; document.getElementById('sound-btn').innerText = isMuted ? "🔕" : "🔔"; }
     function playSound(t) { if(!isMuted) sounds[t].play().catch(e=>{}); }
 
+    // Tab band hone par offline karna
+    window.addEventListener('beforeunload', function () {
+        if(currentUser) { navigator.sendBeacon(scriptURL, JSON.stringify({action:"updateStatus", name:currentUser, status:"Offline", seenCount:myLastSeen})); }
+    });
+
     async function checkAuth() {
         const n = document.getElementById('u-name').value.toUpperCase().trim();
         const p = document.getElementById('u-pass').value.trim();
@@ -124,8 +129,15 @@
             document.getElementById('dashboard').style.display='block';
             updateStatus(isPrivateMode ? "Private Mode" : "Online", -1);
             setInterval(refreshData, 5000); refreshData();
+            resetInactivityTimer();
             document.getElementById('friendship-tag').innerHTML = `Friendship: ${new Date().getFullYear() - 2015} Years`;
         } else { alert("Wrong Password!"); }
+    }
+
+    async function goOffline() {
+        if(!currentUser) return;
+        await updateStatus("Offline", myLastSeen);
+        location.reload(); 
     }
 
     async function refreshData() {
@@ -135,19 +147,14 @@
             let sHtml = ""; let otherSeen = 0, otherName = "";
             
             data.onlineUsers.forEach(u => {
-                let uNameUpper = u.name.toUpperCase();
-                let isMe = uNameUpper.includes(currentUser);
+                let isMe = u.name.toUpperCase().includes(currentUser);
                 if(!isMe) { otherSeen = u.seenCount; otherName = u.name; }
                 else { if(myLastSeen === -1 || u.seenCount > myLastSeen) myLastSeen = u.seenCount; }
                 
-                // FIXED PRIVATE MODE LOGIC
-                let displayStatus = u.status;
-                if(isMe && isPrivateMode) displayStatus = "Private Mode";
+                let dotClass = u.status === "Online" ? "dot-online" : "dot-offline";
+                let pulse = (u.status === "Online" || u.status === "Private Mode") ? '<span class="pulse">❤️</span>' : '';
                 
-                let dotClass = displayStatus === "Online" ? "dot-online" : "dot-offline";
-                let pulse = displayStatus === "Online" ? '<span class="pulse">❤️</span>' : '';
-                
-                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${displayStatus}${pulse}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="location.reload()">OFF</button>` : ''}</span></div>`;
+                sHtml += `<div class="user-row"><span><span class="dot ${dotClass}"></span><b>${u.name}</b>: ${u.status}${pulse}</span><span><small>${u.time}</small> ${isMe ? `<button class="off-btn" onclick="goOffline()">OFF</button>` : ''}</span></div>`;
             });
             document.getElementById('status-container').innerHTML = sHtml;
 
@@ -172,7 +179,6 @@
                 let hHtml = ""; 
                 history.slice().reverse().forEach(h => {
                     let c = h.name.toUpperCase().includes("AWAIS") ? "note-awais" : "note-nisha";
-                    // Display Time and Date from Sheet
                     hHtml += `<div class="note-item ${c}"><div>${h.note}</div><span class="note-meta">${h.name} • ${h.time}</span></div>`;
                 });
                 document.getElementById('notes-display').innerHTML = hHtml;
@@ -199,11 +205,22 @@
         else if (pass !== null) alert("Wrong Password!");
     }
 
-    function updateStatus(s, count) { return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:s, isPrivateMode:isPrivateMode, seenCount:count})}); }
+    function updateStatus(s, count) { 
+        let statusToSent = s;
+        if(s === "Online" && isPrivateMode) statusToSent = "Private Mode";
+        return fetch(scriptURL, {method:'POST', mode:'no-cors', body:JSON.stringify({action:"updateStatus", name:currentUser, status:statusToSent, isPrivateMode:isPrivateMode, seenCount:count})}); 
+    }
+    
     function unlockHistory() { let p = prompt("Pass:"); if(p==="123") { isUnlocked = true; document.getElementById('unlock-btn').style.display='none'; document.getElementById('history-area').style.display='block'; refreshData(); } }
     function closeHistory() { isUnlocked = false; document.getElementById('history-area').style.display='none'; document.getElementById('unlock-btn').style.display='block'; }
     function checkPrivateStatus() { if(isPrivateMode) { alert("Not allowed in Private Mode!"); document.getElementById('note-input').blur(); } }
-    function resetInactivityTimer() { clearTimeout(inactivityTimer); if(currentUser) inactivityTimer = setTimeout(() => { location.reload(); }, 300000); }
+    
+    function resetInactivityTimer() { 
+        clearTimeout(inactivityTimer); 
+        if(currentUser) {
+            inactivityTimer = setTimeout(() => { goOffline(); }, 300000); // 5 Minutes
+        } 
+    }
 </script>
 </body>
 </html>
